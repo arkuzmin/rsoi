@@ -1,0 +1,2 @@
+cd <директория с классами> (D:\workspaces\bmstu\rsoi\TaxiClientWeb\src\main\java)
+wsimport -keep http://localhost:8080/DispAISWeb/dais?wsdl
