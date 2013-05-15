@@ -1,2 +1,4 @@
 *.war
 *.class
+*.jar
+.metadata
