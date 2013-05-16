@@ -17,14 +17,16 @@
 		are not embedded in the application -->
 	<jee:jndi-lookup id="mqConnectionFactory"
 		jndi-name="java:comp/env/jms/mqConnectionFactory" />
-	<jee:jndi-lookup id="testQueueOne" jndi-name="java:comp/env/jms/testQueueOne" />
-	<jee:jndi-lookup id="testQueueTwo" jndi-name="java:comp/env/jms/testQueueTwo" />
+	<jee:jndi-lookup id="taxiparkDispIn" jndi-name="java:comp/env/jms/TAXIPARK.DISP.IN" />
+	<jee:jndi-lookup id="taxiparkTaxiIn" jndi-name="java:comp/env/jms/TAXIPARK.TAXI.IN" />
+	<jee:jndi-lookup id="dispTaxiparkIn" jndi-name="java:comp/env/jms/DISP.TAXIPARK.IN" />
+	<jee:jndi-lookup id="taxiTaxiparkIn" jndi-name="java:comp/env/jms/TAXI.TAXIPARK.IN" />
 
 	<!-- Our message listener implementation that implements the JMS MessageListener 
 		interface and implements the onMessage method to process incoming messages -->
-	<bean id="testMessageListener" class="ru.arkuzmin.tpw.listener.DispAISListener">
-	</bean>
-
+	<bean id="dispAisListener" class="ru.arkuzmin.tpw.listener.DispAISListener"></bean>
+	<bean id="taxiAisListener" class="ru.arkuzmin.tpw.listener.TaxiAISListener"></bean>
+	
 	<!-- DefaultMessageListenerConatiner is the Spring equivalent to an EJB 
 		Message Driven Bean. It polls and consumes messages from a JMS queue. The 
 		configuration below is as follows 1. connectionFactory - the connection factory 
@@ -37,14 +39,22 @@
 		- this is the number of threads that the DeafultMesaegListenerContainer will 
 		spawn to handle incoming messages. The default is 1 but in our application 
 		we'll have 2 separate threads processing incoming messages. -->
-	<bean id="poiMessageListenerContainer"
+	<bean id="dispMessageListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
 		<property name="connectionFactory" ref="mqConnectionFactory" />
-		<property name="destination" ref="testQueueOne" />
-		<property name="messageListener" ref="testMessageListener" />
+		<property name="destination" ref="taxiparkDispIn" />
+		<property name="messageListener" ref="dispAisListener" />
 		<property name="concurrentConsumers" value="2" />
 	</bean>
-
+	
+	<bean id="taxiMessageListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="mqConnectionFactory" />
+		<property name="destination" ref="taxiparkTaxiIn" />
+		<property name="messageListener" ref="taxiAisListener" />
+		<property name="concurrentConsumers" value="2" />
+	</bean>
+	
 	<!-- JMSTemplate is a Spring template that allows us to communicate with 
 		a message broker via JMS. JMSTemplate takes care of boiler plate code such 
 		as exception handling and resource management such as connection pooling. 
