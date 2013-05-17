@@ -41,7 +41,7 @@ public class TaxiparkAISListener implements MessageListener {
 					Map<String, String> props = new LinkedHashMap<String, String>();
 					props.put("status", "free");
 					props.put("coordinates", "coordinates");
-					MsgSender.sendMessage(getQueueName(), null, props);
+					MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
 					
 				} else {
 					throw new BadMessageException("Incorrect message for the TAXI system, field msgType = " + msgType);

@@ -21,19 +21,28 @@ public class MsgSender {
 
 	private static String url = ActiveMQConnection.DEFAULT_BROKER_URL;
 
-	public static void sendMessage(String queue, String msg, Map<String, String> properties) throws JMSException {
-
-		String msgToSend = msg == null ? "" : msg;	
-		
-		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-		Connection connection = connectionFactory.createConnection();
-		connection.start();
-		
+	
+	private static void sendToQueue(Connection connection, Object destination, String msgToSend, Map<String, String> properties, Destination replyTo, String correlationID) throws JMSException {
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-		Destination destination = session.createQueue(queue);
 		
-		MessageProducer producer = session.createProducer(destination);
+		Destination dest = null;
+		
+		if (destination instanceof String) {
+			dest = session.createQueue((String)destination);
+		} else if (destination instanceof Destination) {
+			dest = (Destination)destination;
+		}
+		
+		MessageProducer producer = session.createProducer(dest);
 		TextMessage message = session.createTextMessage(msgToSend);
+		
+		if (replyTo != null) {
+			message.setJMSReplyTo(replyTo);
+		}
+		
+		if (correlationID != null) {
+			message.setJMSCorrelationID(correlationID);
+		}
 		
 		for (String propName : properties.keySet()) {
 			String propValue = properties.get(propName);
@@ -41,7 +50,33 @@ public class MsgSender {
 		}
 		
 		producer.send(message);
-		connection.close();
 		logger.debug("Message sent! " + message.getText());
+	}
+	
+	public static void sendMessage(Destination destination, String msg, Map<String, String> properties, Destination replyTo, String correlationID) throws JMSException {
+		
+		String msgToSend = msg == null ? "" : msg;	
+		
+		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+		Connection connection = connectionFactory.createConnection();
+		connection.start();
+	
+		sendToQueue(connection, destination, msgToSend, properties, replyTo, correlationID);
+		
+		connection.close();
+	}
+	
+	
+	public static void sendMessage(String queue, String msg, Map<String, String> properties, Destination replyTo, String correlationID) throws JMSException {
+
+		String msgToSend = msg == null ? "" : msg;	
+		
+		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+		Connection connection = connectionFactory.createConnection();
+		connection.start();
+		
+		sendToQueue(connection, queue, msgToSend, properties, replyTo, correlationID);
+		
+		connection.close();
 	}
 }
