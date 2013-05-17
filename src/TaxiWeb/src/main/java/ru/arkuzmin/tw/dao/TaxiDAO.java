@@ -18,11 +18,15 @@ public class TaxiDAO {
 	
 	private static final String CHANGE_STATUS = "update car set status = ?";
 	
+	private static final String GET_COORDINATES = "select coordinates from car";
+	
+	private static final String SET_COORDINATES = "update car set coordinates = ?";
+	
 	/**
 	 * Возвращает текущий статус автомобиля.
 	 * @return
 	 */
-	public String chechStatus() {
+	public String checkStatus() {
 		String result = null;
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -31,6 +35,59 @@ public class TaxiDAO {
 		try {
 			conn = ConnectionFactory.getInstance().getConnection();
 			stmt = conn.prepareStatement(CHECK_STATUS);
+			
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+		return result;
+	}
+	
+	/**
+	 * Обновление текущих координат автомобиля.
+	 * @param newStatus
+	 * @return
+	 */
+	public boolean setCoordinates(String coordinates) {
+		boolean result = false;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(SET_COORDINATES);
+			
+			stmt.setString(1, coordinates);
+			
+			result = stmt.executeUpdate() == 1 ? true : false;
+			
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, null);
+		}
+		return result;
+	}
+	
+	/**
+	 * Возвращает текущие координаты автомобиля.
+	 * @return
+	 */
+	public String getCoordinates() {
+		String result = null;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(GET_COORDINATES);
 			
 			rs = stmt.executeQuery();
 			
