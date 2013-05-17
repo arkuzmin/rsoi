@@ -17,11 +17,11 @@
 		are not embedded in the application -->
 	<jee:jndi-lookup id="mqConnectionFactory"
 		jndi-name="java:comp/env/jms/mqConnectionFactory" />
-	<jee:jndi-lookup id="taxiTaxiparkIn" jndi-name="java:comp/env/jms/taxi1Taxipark1In" />
+	<jee:jndi-lookup id="taxi1Taxipark1In" jndi-name="java:comp/env/jms/taxi1Taxipark1In" />
 
 	<!-- Our message listener implementation that implements the JMS MessageListener 
 		interface and implements the onMessage method to process incoming messages -->
-	<bean id="taxiparkAisListener" class="ru.arkuzmin.tpw.listener.TaxiparkAISListener"></bean>
+	<bean id="taxiparkAisListener" class="ru.arkuzmin.tw.listener.TaxiparkAISListener"></bean>
 	
 	<!-- DefaultMessageListenerConatiner is the Spring equivalent to an EJB 
 		Message Driven Bean. It polls and consumes messages from a JMS queue. The 
@@ -38,7 +38,7 @@
 	<bean id="taxiparkMessageListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
 		<property name="connectionFactory" ref="mqConnectionFactory" />
-		<property name="destination" ref="taxiTaxiparkIn" />
+		<property name="destination" ref="taxi1Taxipark1In" />
 		<property name="messageListener" ref="taxiparkAisListener" />
 		<property name="concurrentConsumers" value="2" />
 	</bean>
