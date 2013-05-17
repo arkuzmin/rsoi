@@ -5,8 +5,8 @@
 		type="org.apache.activemq.ActiveMQConnectionFactory" description="JMS Connection Factory"
 		factory="org.apache.activemq.jndi.JNDIReferenceFactory" brokerURL="tcp://localhost:61616" />
 
-	<Resource name="jms/taxiTaxiparkIn" auth="Container"
+	<Resource name="jms/taxi1Taxipark1In" auth="Container"
 		type="org.apache.activemq.command.ActiveMQQueue" factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-		physicalName="TAXI.TAXIPARK.IN" />
+		physicalName="TAXI1.TAXIPARK1.IN" />
 
 </Context>  

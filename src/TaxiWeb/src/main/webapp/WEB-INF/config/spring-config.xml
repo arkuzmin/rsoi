@@ -17,7 +17,7 @@
 		are not embedded in the application -->
 	<jee:jndi-lookup id="mqConnectionFactory"
 		jndi-name="java:comp/env/jms/mqConnectionFactory" />
-	<jee:jndi-lookup id="taxiTaxiparkIn" jndi-name="java:comp/env/jms/taxiTaxiparkIn" />
+	<jee:jndi-lookup id="taxiTaxiparkIn" jndi-name="java:comp/env/jms/taxi1Taxipark1In" />
 
 	<!-- Our message listener implementation that implements the JMS MessageListener 
 		interface and implements the onMessage method to process incoming messages -->

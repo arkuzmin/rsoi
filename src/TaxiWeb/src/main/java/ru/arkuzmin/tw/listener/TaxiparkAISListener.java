@@ -59,6 +59,7 @@ public class TaxiparkAISListener implements MessageListener {
 
 	}
 	
+	@SuppressWarnings("unused")
 	private String getQueueName() {
 		if (queueName == null) {
 			queueName = mqProperties.getProperty("taxiTaxiparkInQueue");
