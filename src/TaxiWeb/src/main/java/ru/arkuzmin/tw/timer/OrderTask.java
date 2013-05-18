@@ -9,10 +9,10 @@ import javax.jms.JMSException;
 
 import org.apache.log4j.Logger;
 
+import ru.arkuzmin.common.MsgSender;
 import ru.arkuzmin.tw.common.CommonUtils;
 import ru.arkuzmin.tw.common.Globals;
 import ru.arkuzmin.tw.dao.TaxiDAO;
-import ru.arkuzmin.tw.sender.MsgSender;
 
 
 public class OrderTask extends TimerTask {

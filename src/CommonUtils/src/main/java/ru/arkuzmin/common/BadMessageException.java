@@ -1,4 +1,4 @@
-package ru.arkuzmin.tw.common;
+package ru.arkuzmin.common;
 
 public class BadMessageException extends Exception {
 

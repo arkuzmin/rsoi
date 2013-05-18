@@ -1,14 +1,10 @@
-package ru.arkuzmin.tw.common;
+package ru.arkuzmin.common;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-
 public class PropertiesLoader {
-	
-	private static final Logger logger = CommonUtils.getLogger();
 	
 	public static Properties loadProperties(String propName) {
 		Properties properties = null;
@@ -18,7 +14,7 @@ public class PropertiesLoader {
 			properties = new Properties();
 			properties.load(is);
 		} catch (IOException e) {
-			logger.error("Error", e);
+			e.printStackTrace();
 		}
 		return properties;
 	}

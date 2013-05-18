@@ -32,6 +32,11 @@
 			<version>5.7.0</version>
 		</dependency>
 		<dependency>
+			<groupId>CommonUtils</groupId>
+			<artifactId>CommonUtils</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>6.0</version>

@@ -1,22 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>MsgProducer</groupId>
-	<artifactId>MsgProducer</artifactId>
+	<groupId>CommonUtils</groupId>
+	<artifactId>CommonUtils</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
 	<dependencies>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
 			<version>5.7.0</version>
 		</dependency>
-		<dependency>
-			<groupId>CommonUtils</groupId>
-			<artifactId>CommonUtils</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
-
 
 	<build>
 		<plugins>
@@ -30,5 +31,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>TaxiWeb</finalName>
 	</build>
 </project>

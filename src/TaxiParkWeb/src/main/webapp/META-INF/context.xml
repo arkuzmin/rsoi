@@ -5,19 +5,12 @@
 		type="org.apache.activemq.ActiveMQConnectionFactory" description="JMS Connection Factory"
 		factory="org.apache.activemq.jndi.JNDIReferenceFactory" brokerURL="tcp://localhost:61616" />
 
-	<Resource name="jms/taxiparkDispIn" auth="Container"
+	<Resource name="jms/taxipark1DispIn" auth="Container"
 		type="org.apache.activemq.command.ActiveMQQueue" factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-		physicalName="TAXIPARK.DISP.IN" />
+		physicalName="TAXIPARK1.DISP.IN" />
 
-	<Resource name="jms/taxiparkTaxiIn" auth="Container"
+	<Resource name="jms/taxipark1TaxiIn" auth="Container"
 		type="org.apache.activemq.command.ActiveMQQueue" factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-		physicalName="TAXIPARK.TAXI.IN" />
-
-	<Resource name="jms/dispTaxiparkIn" auth="Container"
-		type="org.apache.activemq.command.ActiveMQQueue" factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-		physicalName="DISP.TAXIPARK.IN" />
-
-	<Resource name="jms/taxiTaxiparkIn" auth="Container"
-		type="org.apache.activemq.command.ActiveMQQueue" factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-		physicalName="TAXI.TAXIPARK.IN" />
+		physicalName="TAXIPARK1.TAXI.IN" />
+		
 </Context>  

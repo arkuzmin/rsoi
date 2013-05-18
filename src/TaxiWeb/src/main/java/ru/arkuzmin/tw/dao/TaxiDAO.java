@@ -7,8 +7,9 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
+import ru.arkuzmin.common.ConnectionFactory;
+import ru.arkuzmin.common.SQLUtils;
 import ru.arkuzmin.tw.common.CommonUtils;
-import ru.arkuzmin.tw.common.SQLUtils;
 
 public class TaxiDAO {
 
@@ -21,6 +22,8 @@ public class TaxiDAO {
 	private static final String GET_COORDINATES = "select coordinates from car";
 	
 	private static final String SET_COORDINATES = "update car set coordinates = ?";
+	
+	private static final String GET_GUID = "select car_guid from car";
 	
 	/**
 	 * Возвращает текущий статус автомобиля.
@@ -35,6 +38,33 @@ public class TaxiDAO {
 		try {
 			conn = ConnectionFactory.getInstance().getConnection();
 			stmt = conn.prepareStatement(CHECK_STATUS);
+			
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+		return result;
+	}
+	
+	/**
+	 * Возвращает текущий статус автомобиля.
+	 * @return
+	 */
+	public String getTaxiGuid() {
+		String result = null;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(GET_GUID);
 			
 			rs = stmt.executeQuery();
 			

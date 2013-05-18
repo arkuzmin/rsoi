@@ -1,18 +1,12 @@
-package ru.arkuzmin.tw.dao;
+package ru.arkuzmin.common;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
-
-import ru.arkuzmin.tw.common.CommonUtils;
-import ru.arkuzmin.tw.common.PropertiesLoader;
-
 public class ConnectionFactory {
 	
-	private static final Logger logger = CommonUtils.getLogger();
 	
 	private Properties properties;
 
@@ -24,7 +18,7 @@ public class ConnectionFactory {
 			Class.forName(properties.getProperty("driverClassName"));
 			
 		} catch (ClassNotFoundException e) {
-			logger.error("Error", e);
+			e.printStackTrace();
 		}
 	}
 

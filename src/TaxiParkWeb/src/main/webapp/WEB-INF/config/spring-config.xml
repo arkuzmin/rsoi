@@ -17,10 +17,8 @@
 		are not embedded in the application -->
 	<jee:jndi-lookup id="mqConnectionFactory"
 		jndi-name="java:comp/env/jms/mqConnectionFactory" />
-	<jee:jndi-lookup id="taxiparkDispIn" jndi-name="java:comp/env/jms/TAXIPARK.DISP.IN" />
-	<jee:jndi-lookup id="taxiparkTaxiIn" jndi-name="java:comp/env/jms/TAXIPARK.TAXI.IN" />
-	<jee:jndi-lookup id="dispTaxiparkIn" jndi-name="java:comp/env/jms/DISP.TAXIPARK.IN" />
-	<jee:jndi-lookup id="taxiTaxiparkIn" jndi-name="java:comp/env/jms/TAXI.TAXIPARK.IN" />
+	<jee:jndi-lookup id="taxipark1DispIn" jndi-name="java:comp/env/jms/taxipark1DispIn" />
+	<jee:jndi-lookup id="taxipark1TaxiIn" jndi-name="java:comp/env/jms/taxipark1TaxiIn" />
 
 	<!-- Our message listener implementation that implements the JMS MessageListener 
 		interface and implements the onMessage method to process incoming messages -->
@@ -42,7 +40,7 @@
 	<bean id="dispMessageListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
 		<property name="connectionFactory" ref="mqConnectionFactory" />
-		<property name="destination" ref="taxiparkDispIn" />
+		<property name="destination" ref="taxipark1DispIn" />
 		<property name="messageListener" ref="dispAisListener" />
 		<property name="concurrentConsumers" value="2" />
 	</bean>
@@ -50,11 +48,11 @@
 	<bean id="taxiMessageListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
 		<property name="connectionFactory" ref="mqConnectionFactory" />
-		<property name="destination" ref="taxiparkTaxiIn" />
+		<property name="destination" ref="taxipark1TaxiIn" />
 		<property name="messageListener" ref="taxiAisListener" />
 		<property name="concurrentConsumers" value="2" />
 	</bean>
-	
+
 	<!-- JMSTemplate is a Spring template that allows us to communicate with 
 		a message broker via JMS. JMSTemplate takes care of boiler plate code such 
 		as exception handling and resource management such as connection pooling. 

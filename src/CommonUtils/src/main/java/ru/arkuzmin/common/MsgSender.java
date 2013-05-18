@@ -1,4 +1,4 @@
-package ru.arkuzmin.tw.sender;
+package ru.arkuzmin.common;
 
 import java.util.Map;
 
@@ -12,20 +12,17 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.log4j.Logger;
-
-import ru.arkuzmin.tw.common.CommonUtils;
 
 public class MsgSender {
-	private static final Logger logger = CommonUtils.getLogger();
 
 	private static String url = ActiveMQConnection.DEFAULT_BROKER_URL;
 
 	
-	private static void sendToQueue(Connection connection, Object destination, String msgToSend, Map<String, String> properties, Destination replyTo, String correlationID) throws JMSException {
+	private static void sendToQueue(Connection connection, Object destination, String msgToSend, Map<String, String> properties, Object replyTo, String correlationID) throws JMSException {
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		
 		Destination dest = null;
+		Destination repTo = null;
 		
 		if (destination instanceof String) {
 			dest = session.createQueue((String)destination);
@@ -33,11 +30,17 @@ public class MsgSender {
 			dest = (Destination)destination;
 		}
 		
+		if (replyTo instanceof String) {
+			repTo = session.createQueue((String)replyTo);
+		} else if (destination instanceof Destination) {
+			repTo = (Destination)replyTo;
+		}
+		
 		MessageProducer producer = session.createProducer(dest);
 		TextMessage message = session.createTextMessage(msgToSend);
 		
 		if (replyTo != null) {
-			message.setJMSReplyTo(replyTo);
+			message.setJMSReplyTo(repTo);
 		}
 		
 		if (correlationID != null) {
@@ -50,24 +53,9 @@ public class MsgSender {
 		}
 		
 		producer.send(message);
-		logger.debug("Message sent! " + message.getText());
 	}
 	
-	public static void sendMessage(Destination destination, String msg, Map<String, String> properties, Destination replyTo, String correlationID) throws JMSException {
-		
-		String msgToSend = msg == null ? "" : msg;	
-		
-		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-		Connection connection = connectionFactory.createConnection();
-		connection.start();
-	
-		sendToQueue(connection, destination, msgToSend, properties, replyTo, correlationID);
-		
-		connection.close();
-	}
-	
-	
-	public static void sendMessage(String queue, String msg, Map<String, String> properties, Destination replyTo, String correlationID) throws JMSException {
+	public static void sendMessage(Object queue, String msg, Map<String, String> properties, Object replyTo, String correlationID) throws JMSException {
 
 		String msgToSend = msg == null ? "" : msg;	
 		

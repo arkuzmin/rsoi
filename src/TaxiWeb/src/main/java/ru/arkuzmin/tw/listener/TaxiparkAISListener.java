@@ -11,12 +11,13 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 
-import ru.arkuzmin.tw.common.BadMessageException;
+import ru.arkuzmin.common.BadMessageException;
+import ru.arkuzmin.common.MsgProps;
+import ru.arkuzmin.common.MsgSender;
+import ru.arkuzmin.common.PropertiesLoader;
 import ru.arkuzmin.tw.common.CommonUtils;
 import ru.arkuzmin.tw.common.Globals;
-import ru.arkuzmin.tw.common.PropertiesLoader;
 import ru.arkuzmin.tw.dao.TaxiDAO;
-import ru.arkuzmin.tw.sender.MsgSender;
 import ru.arkuzmin.tw.timer.OrderMaker;
 
 public class TaxiparkAISListener implements MessageListener {
@@ -27,11 +28,7 @@ public class TaxiparkAISListener implements MessageListener {
 	
 	private static String queueName;
 	
-	private static final String STATUS_PROP = "status";
-	private static final String ORDER_PROP = "order";
-	private static final String ACTION_PROP = "action";
-	private static final String COORDINATES_PROP = "coordinates";
-	private static final String DESCRIPTION_PROP = "description";
+
 
 	@Override
 	public void onMessage(Message msg) {
@@ -44,20 +41,20 @@ public class TaxiparkAISListener implements MessageListener {
 				String action = txtMsg.getStringProperty("action");
 
 				// Получение текущего статуса такси
-				if (STATUS_PROP.equals(action)) {
+				if (MsgProps.STATUS_PROP.equals(action)) {
 					
 					TaxiDAO dao = new TaxiDAO();
 					String currentStatus = dao.checkStatus();
 					String coordinates = dao.getCoordinates();
 					
 					Map<String, String> props = new LinkedHashMap<String, String>();
-					props.put(ACTION_PROP, "reply");
-					props.put(STATUS_PROP, currentStatus);
-					props.put(COORDINATES_PROP, coordinates);
-					MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
+					props.put(MsgProps.ACTION_PROP, "reply");
+					props.put(MsgProps.STATUS_PROP, currentStatus);
+					props.put(MsgProps.COORDINATES_PROP, coordinates);
+					MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, mqProperties.getProperty("taxiTaxiparkInQueue"), txtMsg.getJMSCorrelationID());
 					
 				// Постановка новой задачи таксисту	
-				} else if  (ORDER_PROP.equals(action)) {
+				} else if  (MsgProps.ORDER_PROP.equals(action)) {
 					
 					TaxiDAO dao = new TaxiDAO();
 					String currentStatus = dao.checkStatus();
@@ -67,21 +64,24 @@ public class TaxiparkAISListener implements MessageListener {
 						dao.changeStatus(Globals.TaxiStatuses.busy.name());
 						
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(ACTION_PROP, "confirm");
-						props.put(STATUS_PROP, "success");
-						props.put(DESCRIPTION_PROP, "taxi successfully ordered");
+						String taxiGuid = dao.getTaxiGuid();
+						
+						props.put(MsgProps.ACTION_PROP, "confirm");
+						props.put(MsgProps.TAXI_GUID, taxiGuid);
+						props.put(MsgProps.STATUS_PROP, "success");
+						props.put(MsgProps.DESCRIPTION_PROP, "taxi successfully ordered");
 						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
 						
 						// Считаем, что заказ завершен через 2 минуты
-						OrderMaker.completeOrder(60, txtMsg.getJMSReplyTo(), txtMsg.getJMSCorrelationID());
+						OrderMaker.completeOrder(120, txtMsg.getJMSReplyTo(), txtMsg.getJMSCorrelationID());
 						
 					// Иначе - отказ
 					} else {
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(ACTION_PROP, "confirm");
-						props.put(STATUS_PROP, "failed");
-						props.put(DESCRIPTION_PROP, "taxi is already ordered");
-						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
+						props.put(MsgProps.ACTION_PROP, "confirm");
+						props.put(MsgProps.STATUS_PROP, "failed");
+						props.put(MsgProps.DESCRIPTION_PROP, "taxi is already ordered");
+						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props,  mqProperties.getProperty("taxiTaxiparkInQueue"), txtMsg.getJMSCorrelationID());
 					}
 					
 					
