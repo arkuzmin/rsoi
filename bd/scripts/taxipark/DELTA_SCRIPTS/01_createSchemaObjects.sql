@@ -84,5 +84,5 @@ create table rsoi_taxipark2.router (
   order_status varchar(100) not null
 );
 
-drop schema rsoi_taxipark1;
-drop schema rsoi_taxipark2;
+--drop schema rsoi_taxipark1;
+--drop schema rsoi_taxipark2;

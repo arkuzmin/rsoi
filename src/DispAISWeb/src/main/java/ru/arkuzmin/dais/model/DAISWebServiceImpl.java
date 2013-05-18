@@ -47,7 +47,7 @@ public class DAISWebServiceImpl implements DAISWebService {
 	public boolean confirmApplication(Order order, boolean confirm) {
 		boolean result = false;
 		ApplicationDAO dao = new ApplicationDAO();
-		result = dao.confirmApplication(order, confirm);
+		result = dao.confirmApplication(order, null, confirm ? "CONFIRMED" : "CANCELED");
 		return result;
 	}
 

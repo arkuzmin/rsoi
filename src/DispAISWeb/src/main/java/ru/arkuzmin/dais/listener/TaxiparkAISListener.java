@@ -1,0 +1,89 @@
+package ru.arkuzmin.dais.listener;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+
+import org.apache.log4j.Logger;
+
+import ru.arkuzmin.common.BadMessageException;
+import ru.arkuzmin.common.MsgProps;
+import ru.arkuzmin.dais.common.CommonUtils;
+import ru.arkuzmin.dais.dao.ApplicationDAO;
+import ru.arkuzmin.dais.dto.Order;
+
+public class TaxiparkAISListener implements MessageListener {
+
+	private static final Logger logger = CommonUtils.getLogger();
+
+	@Override
+	public void onMessage(Message msg) {
+		try {
+			if (msg instanceof TextMessage) {
+				TextMessage txtMsg = (TextMessage) msg;
+
+				String action = txtMsg.getStringProperty(MsgProps.ACTION_PROP);
+
+				// Поступил ответ от таксопарка
+				if ("confirm".equals(action)) {
+					String status = txtMsg.getStringProperty(MsgProps.STATUS_PROP);
+					
+					// Нет свободных автомобилей, удовлетворяющих условия поиска
+					if ("failed".equals(status)) {
+						
+						String application_guid = txtMsg.getJMSCorrelationID();
+						
+						Order order = new Order();
+						order.setOrderGUID(application_guid);
+						
+						ApplicationDAO dao = new ApplicationDAO();
+						dao.confirmApplication(order, null, "CANCELED");
+						
+					// Заказ успешно принят в обработку таксистом
+					} else if ("success".equals(status)) {
+						
+						String application_guid = txtMsg.getJMSCorrelationID();
+						String taxi_queue = txtMsg.getStringProperty(MsgProps.TAXI_QUEUE);
+						
+						Order order = new Order();
+						order.setOrderGUID(application_guid);
+						
+						ApplicationDAO dao = new ApplicationDAO();
+						dao.confirmApplication(order, taxi_queue, "CONFIRMED");
+						
+					// Заказ успешно завершен таксистом
+					} else if ("completed".equals(status)) {
+						
+						String application_guid = txtMsg.getJMSCorrelationID();
+						String taxi_queue = txtMsg.getStringProperty(MsgProps.TAXI_QUEUE);
+						
+						Order order = new Order();
+						order.setOrderGUID(application_guid);
+						
+						ApplicationDAO dao = new ApplicationDAO();
+						dao.confirmApplication(order, taxi_queue, "COMPLETED");
+					}
+					
+				// Поступил ответ от таксиста
+				} else if ("reply".equals(action)) {
+					String status = txtMsg.getStringProperty(MsgProps.STATUS_PROP);
+					
+					// Текущий статус таксиста
+					if ("status".equals(status)) {
+						
+					}
+					
+				} else {
+					throw new BadMessageException("Incorrect message for the TAXI system, field action = " + action);
+				}
+
+			}
+		} catch (JMSException e) {
+			logger.error("Error", e);
+		} catch (BadMessageException e) {
+			logger.error("Error", e);
+		}
+	}
+
+}

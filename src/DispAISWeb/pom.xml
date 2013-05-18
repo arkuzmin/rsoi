@@ -32,6 +32,11 @@
 			<version>1.2.17</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>CommonUtils</groupId>
+			<artifactId>CommonUtils</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

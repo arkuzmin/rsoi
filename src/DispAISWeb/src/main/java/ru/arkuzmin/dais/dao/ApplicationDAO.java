@@ -43,7 +43,7 @@ public class ApplicationDAO {
 	 * Запрос на подтверждение или отмену заявки.
 	 */
 	private static final String CONFIRM_APPLICATION = 
-		"update rsoi_disp.application set application_st = ?,  where application_guid = ?";
+		"update rsoi_disp.application set application_st = ?, taxi_queue = ?  where application_guid = ?";
 
 	
 	
@@ -54,7 +54,7 @@ public class ApplicationDAO {
 	 * @param confirm - подтверждение или отмена
 	 * @return
 	 */
-	public boolean confirmApplication(Order order, boolean confirm) {
+	public boolean confirmApplication(Order order, String taxi_queue, String status) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		boolean result = false;
@@ -68,7 +68,8 @@ public class ApplicationDAO {
 			stmt = conn.prepareStatement(CONFIRM_APPLICATION);
 			
 			int paramIndex = 1;
-			stmt.setString(paramIndex++, confirm ? "CONFIRMED" : "CANCELED");
+			stmt.setString(paramIndex++, status);
+			stmt.setString(paramIndex++, taxi_queue == null ? "unknown" : taxi_queue);
 			stmt.setString(paramIndex++, order.getOrderGUID());
 			
 			result = stmt.executeUpdate() == 1 ? true : false;

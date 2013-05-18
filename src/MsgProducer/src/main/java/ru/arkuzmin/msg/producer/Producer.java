@@ -17,6 +17,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 import ru.arkuzmin.common.MsgProps;
 
+@SuppressWarnings("unused")
 public class Producer {
 
 	private static final String QUEUE = "TAXI1.TAXIPARK1.IN";
