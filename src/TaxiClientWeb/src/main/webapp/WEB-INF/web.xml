@@ -44,6 +44,15 @@
 		<url-pattern>/makeorder/*</url-pattern>
 	</servlet-mapping>
 	<servlet>
+		<servlet-name>ViewStatusR</servlet-name>
+		<servlet-class>ru.arkuzmin.tcw.model.DAISViewStatusRServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ViewStatusR</servlet-name>
+		<url-pattern>/viewstatusr/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>log4j-init</servlet-name>
 		<servlet-class>ru.arkuzmin.tcw.model.Log4jInitServlet</servlet-class>
 		<init-param>

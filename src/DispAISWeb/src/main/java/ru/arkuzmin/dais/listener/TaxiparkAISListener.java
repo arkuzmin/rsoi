@@ -12,6 +12,7 @@ import ru.arkuzmin.common.MsgProps;
 import ru.arkuzmin.dais.common.CommonUtils;
 import ru.arkuzmin.dais.dao.ApplicationDAO;
 import ru.arkuzmin.dais.dto.Order;
+import ru.arkuzmin.dais.timer.StatusCache;
 
 public class TaxiparkAISListener implements MessageListener {
 
@@ -52,6 +53,9 @@ public class TaxiparkAISListener implements MessageListener {
 						ApplicationDAO dao = new ApplicationDAO();
 						dao.confirmApplication(order, taxi_queue, "CONFIRMED");
 						
+						// Запускаем задачу автоматического кэширования статуса заказа
+						StatusCache.cacheStatus(15, taxi_queue, application_guid);
+						
 					// Заказ успешно завершен таксистом
 					} else if ("completed".equals(status)) {
 						
@@ -63,15 +67,6 @@ public class TaxiparkAISListener implements MessageListener {
 						
 						ApplicationDAO dao = new ApplicationDAO();
 						dao.confirmApplication(order, taxi_queue, "COMPLETED");
-					}
-					
-				// Поступил ответ от таксиста
-				} else if ("reply".equals(action)) {
-					String status = txtMsg.getStringProperty(MsgProps.STATUS_PROP);
-					
-					// Текущий статус таксиста
-					if ("status".equals(status)) {
-						
 					}
 					
 				} else {

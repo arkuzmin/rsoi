@@ -50,7 +50,7 @@ public class DAISAuthorizeServlet extends HttpServlet {
 			
 			if (user == null) {
 				request.getSession().setAttribute("errorMsg", "Не удалось войти в систему, некорректный логин или пароль.");
-				RequestDispatcher disp = getServletContext().getRequestDispatcher("/index.jsp");
+				RequestDispatcher disp = getServletContext().getRequestDispatcher("/error.jsp");
 				if (disp != null) {
 					disp.forward(request, response);
 				}

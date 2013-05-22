@@ -9,6 +9,7 @@ public interface MsgProps {
 	final String KM_PRICE_PROP = "km_price";
 	final String COMFORT_CLASS_PROP = "comfort_class";
 	final String STATUS_PROP = "status";
+	final String STATUS_VAL_PROP = "status_value";
 	final String ACTION_PROP = "action";
 	final String COORDINATES_PROP = "coordinates";
 	final String DESCRIPTION_PROP = "description";

@@ -26,6 +26,23 @@ public interface DAISWebService {
 
     /**
      * 
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns ru.arkuzmin.dais.model.Status
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getStatus", targetNamespace = "http://model.dais.arkuzmin.ru/", className = "ru.arkuzmin.dais.model.GetStatus")
+    @ResponseWrapper(localName = "getStatusResponse", targetNamespace = "http://model.dais.arkuzmin.ru/", className = "ru.arkuzmin.dais.model.GetStatusResponse")
+    public Status getStatus(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        String arg1);
+
+    /**
+     * 
      * @param arg0
      * @return
      *     returns boolean

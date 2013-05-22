@@ -10,8 +10,9 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import ru.arkuzmin.common.ConnectionFactory;
+import ru.arkuzmin.common.SQLUtils;
 import ru.arkuzmin.dais.common.CommonUtils;
-import ru.arkuzmin.dais.common.SQLUtils;
 import ru.arkuzmin.dais.dto.Order;
 import ru.arkuzmin.dais.dto.User;
 
@@ -24,12 +25,21 @@ public class ApplicationDAO {
 
 	private static final Logger logger = CommonUtils.getLogger();
 	
+	private static final String GET_ORDER_DETAIL_GUID = "select order_detail_guid from application where application_guid = ?";
+	
+	private static final String SELECT_CURRENT_GUEST_APP = "select application_guid from " +
+			"(select application_guid from application where requester_guid = " +
+			"(select guest_guid from guest where guest_code = ?) order by application_dt desc) as t  limit 0,1";
+	
+	private static final String SELECT_CURRENT_USER_APP = "select application_guid from " +
+			"(select application_guid from application where requester_guid = ? order by application_dt desc) as t  limit 0,1";
+	
 	/**
 	 * Запрос на добавление новой заявки от пользователя.
 	 */
 	private static final String ADD_APPLICATION = 
-		"insert into rsoi_disp.application (application_guid, application_st, requester_guid, order_detail_guid, user_identifier) " +
-		"values (?, ?, ?, ?, ?)";
+		"insert into rsoi_disp.application (application_guid, application_st, requester_guid, order_detail_guid, user_identifier, taxi_queue) " +
+		"values (?, ?, ?, ?, ?, ?)";
 	
 	/**
 	 * Запрос на получение истории пользователя.
@@ -46,7 +56,40 @@ public class ApplicationDAO {
 		"update rsoi_disp.application set application_st = ?, taxi_queue = ?  where application_guid = ?";
 
 	
+	public String getUserApplicationGuid(String guid) {
+		return getApplicationGuid(SELECT_CURRENT_USER_APP, guid);
+	}
 	
+	public String getGuestApplicationGuid(String guid) {
+		return getApplicationGuid(SELECT_CURRENT_GUEST_APP, guid);
+	}
+	
+	private String getApplicationGuid(String sql, String guid) {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		String result = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(sql);
+			
+			int paramIndex = 1;
+			stmt.setString(paramIndex++, guid);
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * Выполняет подтверждение или отмену заявки.
@@ -129,6 +172,33 @@ public class ApplicationDAO {
 		return history;
 	}
 	
+	public String getOrderDetailGuid(String applicationGuid) {
+		String result = null;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+	
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(GET_ORDER_DETAIL_GUID);
+				
+			int paramIndex = 1;
+			stmt.setString(paramIndex++, applicationGuid);
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+		
+		return result;
+	}
+	
 	/**
 	 * Добавление нововой заявки от пользователя.
 	 * @param user - пользователь
@@ -164,6 +234,7 @@ public class ApplicationDAO {
 				stmt.setString(paramIndex++, order.getRequesterGUID());
 				stmt.setString(paramIndex++, order.getOrderDetailsGUID());
 				stmt.setString(paramIndex++, "R");
+				stmt.setString(paramIndex++, "UNKNOWN");
 				
 				aua = stmt.executeUpdate() == 1 ? true : false;
 			}

@@ -8,6 +8,7 @@ import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
 
 import ru.arkuzmin.dais.dto.Order;
+import ru.arkuzmin.dais.dto.Status;
 import ru.arkuzmin.dais.dto.User;
 
 @WebService
@@ -23,4 +24,6 @@ public interface DAISWebService {
 	public boolean addUserApplication(User user, Order order);
 	@WebMethod
 	public boolean confirmApplication(Order order, boolean confirm);
+	@WebMethod
+	public Status getStatus(String guid, String userIdentifier) ;
 }

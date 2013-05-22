@@ -6,8 +6,8 @@ import javax.jms.Destination;
 
 public class OrderMaker {
 
-	public static void completeOrder(int seconds, Destination dest, String correlationID) {
+	public static void completeOrder(int seconds, int n, Destination dest, String correlationID) {
 		Timer timer = new Timer();
-		timer.schedule(new OrderTask(dest, correlationID), seconds * 1000);
+		timer.schedule(new OrderTask(dest, correlationID, n, seconds), seconds * 1000);
 	}
 }

@@ -1,5 +1,15 @@
 CREATE SCHEMA rsoi_disp DEFAULT CHARACTER SET utf8 ;
 
+create table rsoi_disp.taxiparks (
+  taxipark_guid varchar(200) not null,
+  taxipark_queue varchar(100) not null,
+  
+  primary key(taxipark_guid)
+);
+
+insert into rsoi_disp.taxiparks (taxipark_guid, taxipark_queue) values ('947a24f8-ead8-4820-984a-108b241bdbbc', 'TAXIPARK1.DISP.IN');
+insert into rsoi_disp.taxiparks (taxipark_guid, taxipark_queue) values ('8113c1a7-75d8-4c3a-9757-5d5dccf26a41', 'TAXIPARK2.DISP.IN');
+
 -- “аблица зарегистрированных пользователей
 create table rsoi_disp.USER (
 	USER_GUID VARCHAR(200) NOT NULL,

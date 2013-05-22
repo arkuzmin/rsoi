@@ -73,7 +73,7 @@ public class TaxiparkAISListener implements MessageListener {
 						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
 						
 						// Считаем, что заказ завершен через 2 минуты
-						OrderMaker.completeOrder(120, txtMsg.getJMSReplyTo(), txtMsg.getJMSCorrelationID());
+						OrderMaker.completeOrder(12, 10, txtMsg.getJMSReplyTo(), txtMsg.getJMSCorrelationID());
 						
 					// Иначе - отказ
 					} else {

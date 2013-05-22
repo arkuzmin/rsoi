@@ -66,7 +66,7 @@
               </li>
               <li class="span4">
                 <div class="thumbnail">
-                  <form action="viewstatus" method="post">
+                  <form action="viewstatusr" method="post">
                     <div class="caption">
                       <h3>Статус заказа <img src="img/status.png" width="50" height="50"></h3>
                       <p>Просмотр статуса Вашего текущего заказа.</p>
