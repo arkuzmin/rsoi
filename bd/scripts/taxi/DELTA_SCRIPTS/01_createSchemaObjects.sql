@@ -91,3 +91,10 @@ create table rsoi_taxi3_taxipark2.car (
 comment = 'Текущее состояние автомобиля такси';
 
 insert into rsoi_taxi3_taxipark2.car (car_guid, coordinates, status) values ('d38d8c08-5751-422e-a0c1-082022a476d4','Стоянка таксопарка №2', 'free');
+
+--drop schema rsoi_taxi1_taxipark1;
+--drop schema rsoi_taxi2_taxipark1;
+--drop schema rsoi_taxi3_taxipark1;
+--drop schema rsoi_taxi1_taxipark2;
+--drop schema rsoi_taxi2_taxipark2;
+--drop schema rsoi_taxi3_taxipark2;
