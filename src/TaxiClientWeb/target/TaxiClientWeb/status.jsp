@@ -17,7 +17,7 @@
 </div>
 	<div class="container">
 		<div class="hero-unit">
-			<h2><img src="img/success.png" width ="64px" height="64px" class="img-rounded"> Статус текущего заказа </h2>
+			<h2><img src="img/status2.png" width ="64px" height="64px" class="img-rounded"> Статус текущего заказа </h2>
 			<p><b>Статус: </b>${currentStatus.order.orderStatus}</p>
 			<hr>
 			<h3>Детали заказа</h3>

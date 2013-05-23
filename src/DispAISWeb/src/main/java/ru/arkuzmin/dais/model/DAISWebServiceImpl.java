@@ -16,9 +16,11 @@ import ru.arkuzmin.common.MsgSender;
 import ru.arkuzmin.common.PropertiesLoader;
 import ru.arkuzmin.dais.common.CommonUtils;
 import ru.arkuzmin.dais.dao.ApplicationDAO;
+import ru.arkuzmin.dais.dao.GuestDAO;
 import ru.arkuzmin.dais.dao.OrderDetailsDAO;
 import ru.arkuzmin.dais.dao.TaxiparkDAO;
 import ru.arkuzmin.dais.dao.UserDAO;
+import ru.arkuzmin.dais.dto.Guest;
 import ru.arkuzmin.dais.dto.Order;
 import ru.arkuzmin.dais.dto.Status;
 import ru.arkuzmin.dais.dto.User;
@@ -128,6 +130,35 @@ public class DAISWebServiceImpl implements DAISWebService {
 			status.setOrder(order);	
 		}
 		return status;
+	}
+
+	@Override
+	public String addGuestApplication(Order order) {
+		
+		boolean result = false;
+		
+		ApplicationDAO dao = new ApplicationDAO();
+		GuestDAO guestDAO = new GuestDAO();
+		Guest guest = guestDAO.addNewGuest();
+		result = dao.addGuestApplication(guest, order);
+		
+		// Послылаем запрос в таксопарки
+		if (result) {
+			TaxiparkDAO tpDao = new TaxiparkDAO();
+			Map<String, String> parks = tpDao.getTaxiparks();
+			
+			for (String key : parks.keySet()) {
+				String queue = parks.get(key);
+				
+				try {
+					MsgSender.sendMessage(queue, null, getTPOrderParams(order), mqProps.getProperty("dispTaxiparkQueue"), order.getOrderGUID());
+				} catch (JMSException e) {
+					logger.error("Error", e);
+				}
+			}
+		}
+		
+		return guest.getCode();
 	}
 
 }

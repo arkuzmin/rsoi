@@ -58,7 +58,6 @@
                           <option value="comf">Комфорт</option>
                           <option value="business">Бизнес</option>
                         </select>
-                        </p>
                         <p><input type="submit" class="btn btn-primary" value="Сделать заказ"></p>
                       </div>
                   </form>
@@ -97,7 +96,7 @@
             <ul class="thumbnails">
               <li class="span6">
                 <div class="thumbnail">
-                    <form action="makeorder" method="post">
+                    <form action="makeordernr" method="post">
                       <div class="caption">
                         <h3>Заказать такси <img src="img/order.png" width="64" height="64"></h3> 
                         <p>Закажите ближайшее к Вам такси, просто заполнив поля формы ниже.</p>
@@ -118,7 +117,6 @@
                           <option value="comf">Комфорт</option>
                           <option value="business">Бизнес</option>
                         </select>
-                        </p>
                         <p><input type="submit" class="btn btn-primary" value="Сделать заказ"></p>
                       </div>
                   </form>

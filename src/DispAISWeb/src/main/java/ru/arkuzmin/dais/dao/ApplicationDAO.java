@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import ru.arkuzmin.common.ConnectionFactory;
 import ru.arkuzmin.common.SQLUtils;
 import ru.arkuzmin.dais.common.CommonUtils;
+import ru.arkuzmin.dais.dto.Guest;
 import ru.arkuzmin.dais.dto.Order;
 import ru.arkuzmin.dais.dto.User;
 
@@ -199,27 +200,21 @@ public class ApplicationDAO {
 		return result;
 	}
 	
-	/**
-	 * Добавление нововой заявки от пользователя.
-	 * @param user - пользователь
-	 * @param order - заказ
-	 * @return
-	 */
-	public boolean addUserApplication(User user, Order order) {
-		Connection conn = null;
+	
+	private boolean addApplication(String requesterGuid, Order order, String userIdentifier, Connection conn) {
+		
 		PreparedStatement stmt = null;
 		boolean result = false;
 		
-		if (user == null || order == null) {
+		if (requesterGuid == null || order == null) {
 			return result;
 		}
 	
 		try {
-			conn = ConnectionFactory.getInstance().getConnection();
 			OrderDetailsDAO odDAO = new OrderDetailsDAO();
 			order.setOrderGUID(UUID.randomUUID().toString());
 			order.setOrderDetailsGUID(UUID.randomUUID().toString());
-			order.setRequesterGUID(user.getGuid());
+			order.setRequesterGUID(requesterGuid);
 			order.setOrderStatus("UNKNOWN");
 			boolean aod = odDAO.addOrderDetails(conn, order);
 			boolean aua = false;
@@ -233,7 +228,7 @@ public class ApplicationDAO {
 				stmt.setString(paramIndex++, "NOT_CONFIRMED");
 				stmt.setString(paramIndex++, order.getRequesterGUID());
 				stmt.setString(paramIndex++, order.getOrderDetailsGUID());
-				stmt.setString(paramIndex++, "R");
+				stmt.setString(paramIndex++, userIdentifier);
 				stmt.setString(paramIndex++, "UNKNOWN");
 				
 				aua = stmt.executeUpdate() == 1 ? true : false;
@@ -244,7 +239,45 @@ public class ApplicationDAO {
 		} catch (SQLException e) {
 			logger.error("Error", e);
 		} finally {
-			SQLUtils.closeSQLObjects(conn, stmt, null);
+			SQLUtils.closeSQLObjects(null, stmt, null);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Добавление нововой заявки от пользователя.
+	 * @param user - пользователь
+	 * @param order - заказ
+	 * @return
+	 */
+	public boolean addUserApplication(User user, Order order) {
+		boolean result = false;
+		Connection conn = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			result = addApplication(user.getGuid(), order, "R", conn);
+		} catch (SQLException e) {
+			logger.error("Error",e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, null, null);
+		}
+		
+		return result; 
+	}
+	
+	public boolean addGuestApplication(Guest guest, Order order) {
+		boolean result = false;
+		Connection conn = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			result = addApplication(guest.getGuid(), order, "G", conn);
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, null, null);
 		}
 		
 		return result;

@@ -120,4 +120,18 @@ public interface DAISWebService {
         @WebParam(name = "arg1", targetNamespace = "")
         boolean arg1);
 
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "addGuestApplication", targetNamespace = "http://model.dais.arkuzmin.ru/", className = "ru.arkuzmin.dais.model.AddGuestApplication")
+    @ResponseWrapper(localName = "addGuestApplicationResponse", targetNamespace = "http://model.dais.arkuzmin.ru/", className = "ru.arkuzmin.dais.model.AddGuestApplicationResponse")
+    public String addGuestApplication(
+        @WebParam(name = "arg0", targetNamespace = "")
+        Order arg0);
+
 }
