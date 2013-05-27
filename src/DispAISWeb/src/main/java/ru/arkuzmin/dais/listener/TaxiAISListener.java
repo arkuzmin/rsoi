@@ -8,6 +8,7 @@ import javax.jms.TextMessage;
 import org.apache.log4j.Logger;
 
 import ru.arkuzmin.common.BadMessageException;
+import ru.arkuzmin.common.MQUtils;
 import ru.arkuzmin.common.MsgProps;
 import ru.arkuzmin.dais.common.CommonUtils;
 import ru.arkuzmin.dais.dao.ApplicationDAO;
@@ -19,17 +20,19 @@ public class TaxiAISListener implements MessageListener {
 
 	@Override
 	public void onMessage(Message msg) {
+		
 		try {
 			if (msg instanceof TextMessage) {
 				TextMessage txtMsg = (TextMessage) msg;
+				logger.debug("[TaxiAISListener] received message: " + MQUtils.getMsgForLog(txtMsg));
 
 				String action = txtMsg.getStringProperty(MsgProps.ACTION);
 
 				// Поступил ответ от таксиста
-				if ("reply".equals(action)) {
+				if (MsgProps.REPLY.equals(action)) {
 					String status = txtMsg.getStringProperty(MsgProps.STATUS);
-					if ("free".equals(status)) {
-						status = "successfully completed!";
+					if (MsgProps.FREE.equals(status)) {
+						status = MsgProps.COMPLETED;
 					}
 					String coordinates = txtMsg.getStringProperty(MsgProps.COORDINATES);
 					String applicationGuid = txtMsg.getJMSCorrelationID();

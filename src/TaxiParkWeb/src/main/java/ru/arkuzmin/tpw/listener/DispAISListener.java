@@ -14,6 +14,7 @@ import javax.jms.TextMessage;
 import org.apache.log4j.Logger;
 
 import ru.arkuzmin.common.BadMessageException;
+import ru.arkuzmin.common.MQUtils;
 import ru.arkuzmin.common.MsgProps;
 import ru.arkuzmin.common.MsgSender;
 import ru.arkuzmin.common.PropertiesLoader;
@@ -33,31 +34,39 @@ public class DispAISListener implements MessageListener {
 		try {
 			if (msg instanceof TextMessage) {
 				TextMessage txtMsg = (TextMessage) msg;
+				logger.debug("[DispAISListener] received message: " + MQUtils.getMsgForLog(txtMsg));
 				
 				String action = txtMsg.getStringProperty(MsgProps.ACTION);
 				String status = txtMsg.getStringProperty(MsgProps.STATUS);
 				
 				// Подтверждаем заказ от пользователя
 				if (MsgProps.ORDER.equals(action) && MsgProps.CONFIRM.equals(status)) {
-					
-					String address = txtMsg.getStringProperty(MsgProps.ADDRESS);
-					String deliveryTime = txtMsg.getStringProperty(MsgProps.DELIVERY_TIME);
-					String minPrice = txtMsg.getStringProperty(MsgProps.MIN_PRICE);
-					String kmPrice = txtMsg.getStringProperty(MsgProps.KM_PRICE);
-					String comfortClass = txtMsg.getStringProperty(MsgProps.COMFORT_CLASS);
-					
-					Map<String, String> props = new LinkedHashMap<String, String>();
-					props.put(MsgProps.ADDRESS, address);
-					props.put(MsgProps.DELIVERY_TIME, deliveryTime);
-					props.put(MsgProps.MIN_PRICE, minPrice);
-					props.put(MsgProps.KM_PRICE, kmPrice);
-					props.put(MsgProps.COMFORT_CLASS, comfortClass);
-					
 					String taxiQueue = txtMsg.getStringProperty(MsgProps.TAXI_QUEUE);
 					
-					MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
+					String dispCorrId = txtMsg.getJMSCorrelationID();
 					
-				
+					RouterDAO dao = new RouterDAO();
+					String orderStatus = dao.checkStatusByDisp(dispCorrId);
+					String taxiCorrId = dao.getTaxiCorrId(dispCorrId);
+					
+					// Заказ еще не принят в обработку таксистом
+					if (MsgProps.NOT_ASSIGNED.equals(orderStatus)) {
+						
+						Order order = dao.selectOrderDetailsByDisp(dispCorrId);
+						
+						Map<String, String> props = new LinkedHashMap<String, String>();
+						props.put(MsgProps.ACTION, MsgProps.ORDER);
+						props.put(MsgProps.ADDRESS, order.getAddress());
+						props.put(MsgProps.DELIVERY_TIME, order.getDeliveryTime());
+						props.put(MsgProps.MIN_PRICE, order.getMinPrice());
+						props.put(MsgProps.KM_PRICE, order.getKmPrice());
+						props.put(MsgProps.COMFORT_CLASS, order.getComfortClass());
+						props.put(MsgProps.FULL_NAME, order.getFullName());
+						
+						MsgSender.sendMessage(taxiQueue, null, props, mqProps.getProperty("taxiReplyQueue"), taxiCorrId);
+						
+					}	
+					
 				// Поступил заказ от пользователя, проверяем свободных таксистов
 				} else 	if (MsgProps.ORDER.equals(action) && MsgProps.STATUS.equals(status)) {
 					
@@ -88,8 +97,8 @@ public class DispAISListener implements MessageListener {
 					// Нет автомобилей, удовлетворяющих условиям поиска
 					if (cars == null || cars.isEmpty()) {
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(MsgProps.ACTION, "confirm");
-						props.put(MsgProps.STATUS, "failed");
+						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
+						props.put(MsgProps.STATUS, MsgProps.FAILED);
 						props.put(MsgProps.DESCRIPTION, "no taxi cars available with this search conditions");
 						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
 					
@@ -97,7 +106,7 @@ public class DispAISListener implements MessageListener {
 					} else {
 						for (Car car : cars) {
 							Map<String, String> props = new LinkedHashMap<String, String>();
-							props.put(MsgProps.ACTION, "status");
+							props.put(MsgProps.ACTION, MsgProps.STATUS);
 							MsgSender.sendMessage(car.getQueueID(), null, props, mqProps.getProperty("taxiReplyQueue"), taxiCorrID);
 						}
 					}	

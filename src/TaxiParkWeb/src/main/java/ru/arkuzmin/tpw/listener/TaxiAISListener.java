@@ -12,13 +12,13 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 
+import ru.arkuzmin.common.MQUtils;
 import ru.arkuzmin.common.MsgProps;
 import ru.arkuzmin.common.MsgSender;
 import ru.arkuzmin.common.PropertiesLoader;
 import ru.arkuzmin.tpw.common.CommonUtils;
 import ru.arkuzmin.tpw.dao.CarsDAO;
 import ru.arkuzmin.tpw.dao.RouterDAO;
-import ru.arkuzmin.tpw.dto.Order;
 
 public class TaxiAISListener implements MessageListener {
 
@@ -30,43 +30,39 @@ public class TaxiAISListener implements MessageListener {
 		try {
 			if (msg instanceof TextMessage) {
 				TextMessage txtMsg = (TextMessage) msg;
+				logger.debug("[TaxiAISListener] received message: " + MQUtils.getMsgForLog(txtMsg));
 				
 				String action = txtMsg.getStringProperty(MsgProps.ACTION);
 				
 				// Получили ответ на запрос статуса
-				if ("reply".equals(action)) {
+				if (MsgProps.REPLY.equals(action)) {
 					String status = txtMsg.getStringProperty(MsgProps.STATUS);
 					String taxiCorrId = txtMsg.getJMSCorrelationID();
 					
-					// Таксист свободен, делаем заказ
-					if ("free".equals(status)) {
+					// Таксист свободен, уведомляем диспетчерскую АИС
+					if (MsgProps.FREE.equals(status)) {
 						RouterDAO dao = new RouterDAO();
-						String orderStatus = dao.checkStatusByTaxi(taxiCorrId);
-						// Заказ еще не принят в обработку таксистом
-						if ("not_assigned".equals(orderStatus)) {
+						String taxiQueue = txtMsg.getStringProperty(MsgProps.TAXI_QUEUE);
+						String dispCorrId = dao.getDispCorrId(taxiCorrId);
 							
-							Order order = dao.selectOrderDetailsByTaxi(taxiCorrId);
+						Map<String, String> props = new LinkedHashMap<String, String>();
+						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
+						props.put(MsgProps.STATUS, MsgProps.STATUS);
+						props.put(MsgProps.HAS_APPROPRIATE, MsgProps.YES);
+						props.put(MsgProps.HAS_FREE, MsgProps.YES);
+						props.put(MsgProps.TAXI_QUEUE, taxiQueue);
+						
+						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("dispInQueue"), dispCorrId);
 							
-							Map<String, String> props = new LinkedHashMap<String, String>();
-							props.put(MsgProps.ACTION, "order");
-							props.put(MsgProps.ADDRESS, order.getAddress());
-							props.put(MsgProps.DELIVERY_TIME, order.getDeliveryTime());
-							props.put(MsgProps.MIN_PRICE, order.getMinPrice());
-							props.put(MsgProps.KM_PRICE, order.getKmPrice());
-							props.put(MsgProps.COMFORT_CLASS, order.getComfortClass());
-							props.put(MsgProps.FULL_NAME, order.getFullName());
-							
-							MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, mqProps.getProperty("taxiReplyQueue"), txtMsg.getJMSCorrelationID());
-							
-						}
 					}
+
 				// Пришло подтверждение от таксиста	
-				} else if ("confirm".equals(action)) {
+				} else if (MsgProps.CONFIRM.equals(action)) {
 					String status = txtMsg.getStringProperty(MsgProps.STATUS);
 					String taxiCorrId = txtMsg.getJMSCorrelationID();
 					
 					// Таксист успешно принял заказ
-					if ("success".equals(status)) {
+					if (MsgProps.SUCCESS.equals(status)) {
 						
 						RouterDAO dao = new RouterDAO();
 						dao.changeStatusByTaxi(taxiCorrId, "assigned");
@@ -80,15 +76,15 @@ public class TaxiAISListener implements MessageListener {
 						
 						// Сообщаем об успешном заказе в диспетчерскую систему
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(MsgProps.ACTION, "confirm");
-						props.put(MsgProps.STATUS, "success");
+						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
+						props.put(MsgProps.STATUS, MsgProps.SUCCESS);
 						props.put(MsgProps.DESCRIPTION, "taxi successfully ordered");
 						props.put(MsgProps.TAXI_QUEUE, taxiQueue);
 						
 						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("taxiReplyQueue"), dispCorrId);
 					
 						// Заказ успешно завершен
-					} else if ("completed".equals(status)) {
+					} else if (MsgProps.COMPLETED.equals(status)) {
 						
 						RouterDAO dao = new RouterDAO();
 						Map<String, String> route = dao.getRouteByTaxi(taxiCorrId);
@@ -96,8 +92,8 @@ public class TaxiAISListener implements MessageListener {
 						
 						// Сообщаем об успешном завершении заказа в диспетчерскую систему
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(MsgProps.ACTION, "confirm");
-						props.put(MsgProps.STATUS, "completed");
+						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
+						props.put(MsgProps.STATUS, MsgProps.COMPLETED);
 						props.put(MsgProps.DESCRIPTION, "order successfully completed");
 						
 						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("taxiReplyQueue"), dispCorrId);

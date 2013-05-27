@@ -39,8 +39,8 @@ public class OrderTask extends TimerTask {
 		if (n <= 0) {
 			dao.changeStatus(Globals.TaxiStatuses.free.name());
 			Map<String, String> properties = new LinkedHashMap<String, String>();
-			properties.put(MsgProps.ACTION, "confirm");
-			properties.put(MsgProps.STATUS, "completed");
+			properties.put(MsgProps.ACTION, MsgProps.CONFIRM);
+			properties.put(MsgProps.STATUS, MsgProps.COMPLETED);
 			properties.put(MsgProps.DESCRIPTION,
 					"order successfully completed");
 			
@@ -50,7 +50,7 @@ public class OrderTask extends TimerTask {
 				logger.error("Error", e);
 			}
 		} else {
-			dao.changeStatus("Completed " + (N-n) * 100 + "%. " + n*sec + " seconds left...");
+			dao.changeStatus("Completed " + (N-n) * 10 + "%. " + n*sec + " seconds left...");
 			OrderMaker.completeOrder(sec, n-1, dest, correlationID);
 		}
 	}

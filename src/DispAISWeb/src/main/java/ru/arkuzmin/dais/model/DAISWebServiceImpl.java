@@ -84,12 +84,15 @@ public class DAISWebServiceImpl implements DAISWebService {
 	
 	private static Map<String, String> getTPOrderParams(Order order) {
 		Map<String, String> params = new LinkedHashMap<String, String>();
-		params.put(MsgProps.ACTION, "order");
+		params.put(MsgProps.ACTION, MsgProps.ORDER);
+		params.put(MsgProps.STATUS, MsgProps.STATUS);
 		params.put(MsgProps.ADDRESS, order.getAddress());
 		params.put(MsgProps.DELIVERY_TIME, String.valueOf(order.getDeliveryTime()));
 		params.put(MsgProps.MIN_PRICE, order.getMinPrice() == null ? null : String.valueOf(order.getMinPrice()));
 		params.put(MsgProps.KM_PRICE, order.getKmPrice() == null ? null : String.valueOf(order.getKmPrice()));
 		params.put(MsgProps.COMFORT_CLASS, order.getComfortClass());
+		//TODO убрать заглушку
+		params.put(MsgProps.FULL_NAME, "ТУТ ПОЛНОЕ ИМЯ ПОЛЬЗОВАТЕЛЯ");
 		return params;
 	}
 

@@ -37,6 +37,10 @@ public class RouterDAO {
 	
 	private static final String CHANGE_STATUS_BY_TAXI = "update router set order_status = ? where taxi_corrid = ?";
 	
+	private static final String SELECT_DISP_BY_TAXI = "select disp_corrid from router where taxi_corrid = ?";
+	
+	private static final String SELECT_TAXI_BY_DISP = "select taxi_corrid from router where disp_corrid = ?";
+	
 	/**
 	 * Возвращает маршрут.
 	 * @param sql
@@ -157,7 +161,7 @@ public class RouterDAO {
 	}
 	
 	
-	public Order selectOrderDetailsByTaxi(String taxiCorrId) {
+	private Order selectOrderDetails(String corrId, String sql) {
 		Order order = null;
 		
 		Connection conn = null;
@@ -166,8 +170,8 @@ public class RouterDAO {
 
 		try {
 			conn = ConnectionFactory.getInstance().getConnection();
-			stmt = conn.prepareStatement(GET_ROUTE_BY_TAXI);
-			stmt.setString(1, taxiCorrId);
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, corrId);
 			
 			rs = stmt.executeQuery();
 			String orderGuid = null;
@@ -186,6 +190,49 @@ public class RouterDAO {
 		}
 
 		return order;
+	}
+	
+	public Order selectOrderDetailsByDisp(String dispCorrId) {
+		return selectOrderDetails(dispCorrId, GET_ROUTE_BY_DISP);
+	}
+	
+	public Order selectOrderDetailsByTaxi(String taxiCorrId) {
+		return selectOrderDetails(taxiCorrId, GET_ROUTE_BY_TAXI);
+	}
+	
+	private String getCorrId(String sql, String corrId) {
+		String result = null;
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(sql);
+			stmt.setString(1, corrId);
+			
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+
+		return result;
+	}
+	
+	public String getTaxiCorrId(String dispCorrId) {
+		return getCorrId(SELECT_TAXI_BY_DISP, dispCorrId);
+	}
+	
+	public String getDispCorrId(String taxiCorrId) {
+		return getCorrId(SELECT_DISP_BY_TAXI, taxiCorrId);
 	}
 	
 	public boolean addRoute(String dispCorrID, String taxiCorrID, Order order) {

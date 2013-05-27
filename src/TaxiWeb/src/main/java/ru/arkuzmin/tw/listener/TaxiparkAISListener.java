@@ -12,6 +12,7 @@ import javax.jms.TextMessage;
 import org.apache.log4j.Logger;
 
 import ru.arkuzmin.common.BadMessageException;
+import ru.arkuzmin.common.MQUtils;
 import ru.arkuzmin.common.MsgProps;
 import ru.arkuzmin.common.MsgSender;
 import ru.arkuzmin.common.PropertiesLoader;
@@ -37,11 +38,12 @@ public class TaxiparkAISListener implements MessageListener {
 		try {
 			if (msg instanceof TextMessage) {
 				txtMsg = (TextMessage) msg;
+				logger.debug("[TaxiparkAISListener] received message: " + MQUtils.getMsgForLog(txtMsg));
 
 				String action = txtMsg.getStringProperty(MsgProps.ACTION);
 
 				// Получение текущего статуса такси
-				if (MsgProps.ORDER.equals(action)) {
+				if (MsgProps.STATUS.equals(action)) {
 					
 					TaxiDAO dao = new TaxiDAO();
 					String currentStatus = dao.checkStatus();
@@ -51,6 +53,7 @@ public class TaxiparkAISListener implements MessageListener {
 					props.put(MsgProps.ACTION, MsgProps.REPLY);
 					props.put(MsgProps.STATUS, currentStatus);
 					props.put(MsgProps.COORDINATES, coordinates);
+					props.put(MsgProps.TAXI_QUEUE, mqProperties.getProperty("taxiTaxiparkInQueue"));
 					MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, mqProperties.getProperty("taxiTaxiparkInQueue"), txtMsg.getJMSCorrelationID());
 					
 				// Постановка новой задачи таксисту	
@@ -64,10 +67,9 @@ public class TaxiparkAISListener implements MessageListener {
 						dao.changeStatus(Globals.TaxiStatuses.busy.name());
 						
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						String taxiGuid = dao.getTaxiGuid();
 						
 						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
-						props.put(MsgProps.TAXI_GUID, taxiGuid);
+						props.put(MsgProps.TAXI_QUEUE, mqProperties.getProperty("taxiTaxiparkInQueue"));
 						props.put(MsgProps.STATUS, MsgProps.SUCCESS);
 						props.put(MsgProps.DESCRIPTION, "taxi successfully ordered");
 						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
