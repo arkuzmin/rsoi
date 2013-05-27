@@ -17,18 +17,31 @@ import ru.arkuzmin.dais.timer.StatusCache;
 public class TaxiparkAISListener implements MessageListener {
 
 	private static final Logger logger = CommonUtils.getLogger();
-
+	
 	@Override
 	public void onMessage(Message msg) {
 		try {
 			if (msg instanceof TextMessage) {
 				TextMessage txtMsg = (TextMessage) msg;
 
-				String action = txtMsg.getStringProperty(MsgProps.ACTION_PROP);
+				String action = txtMsg.getStringProperty(MsgProps.ACTION);
 
 				// Поступил ответ от таксопарка
 				if ("confirm".equals(action)) {
-					String status = txtMsg.getStringProperty(MsgProps.STATUS_PROP);
+					String status = txtMsg.getStringProperty(MsgProps.STATUS);
+					
+					// Если пришел статус от таксопарка
+					if (MsgProps.STATUS.equals(status)) {
+						String hasFree = txtMsg.getStringProperty(MsgProps.HAS_FREE);
+						String hasAppropriate = txtMsg.getStringProperty(MsgProps.HAS_APPROPRIATE);
+						
+						// Если в этом таксопарке есть подходящие и свободные таксисты
+						if (MsgProps.YES.equals(hasAppropriate) && MsgProps.YES.equals(hasFree)) {
+							
+						}
+						
+					}
+					
 					
 					// Нет свободных автомобилей, удовлетворяющих условия поиска
 					if ("failed".equals(status)) {

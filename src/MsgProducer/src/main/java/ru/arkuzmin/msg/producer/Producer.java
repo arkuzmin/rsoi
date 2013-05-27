@@ -58,23 +58,23 @@ public class Producer {
 	
 	private static Map<String, String> getTPOrderParams() {
 		Map<String, String> params = new LinkedHashMap<String, String>();
-		params.put(MsgProps.ACTION_PROP, "order");
-		params.put(MsgProps.ADDRESS_PROP, "artekovskaya 2-2-360");
-		params.put(MsgProps.DELIVERY_TIME_PROP, "18-05-2013 15:55");
-		params.put(MsgProps.MIN_PRICE_PROP, "90");
-		params.put(MsgProps.KM_PRICE_PROP, "90");
+		params.put(MsgProps.ACTION, "order");
+		params.put(MsgProps.ADDRESS, "artekovskaya 2-2-360");
+		params.put(MsgProps.DELIVERY_TIME, "18-05-2013 15:55");
+		params.put(MsgProps.MIN_PRICE, "90");
+		params.put(MsgProps.KM_PRICE, "90");
 		return params;
 	}
 	
 	private static Map<String, String> getOrderParams() {
 		Map<String, String> params = new LinkedHashMap<String, String>();
-		params.put(MsgProps.ACTION_PROP, "order");
+		params.put(MsgProps.ACTION, "order");
 		return params;
 	}
 	
 	private static Map<String, String> getStatusParams() {
 		Map<String, String> params = new LinkedHashMap<String, String>();
-		params.put(MsgProps.ACTION_PROP, "status");
+		params.put(MsgProps.ACTION, "status");
 		return params;
 	}
 }

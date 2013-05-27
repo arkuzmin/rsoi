@@ -2,19 +2,38 @@ package ru.arkuzmin.common;
 
 public interface MsgProps {
 
-	final String ORDER_PROP = "order";
-	final String ADDRESS_PROP = "address";
-	final String DELIVERY_TIME_PROP = "delivery_time";
-	final String MIN_PRICE_PROP = "min_price";
-	final String KM_PRICE_PROP = "km_price";
-	final String COMFORT_CLASS_PROP = "comfort_class";
-	final String STATUS_PROP = "status";
-	final String STATUS_VAL_PROP = "status_value";
-	final String ACTION_PROP = "action";
-	final String COORDINATES_PROP = "coordinates";
-	final String DESCRIPTION_PROP = "description";
+	final String REPLY = "reply";
+	final String ORDER = "order";
+	final String ADDRESS = "address";
+	final String DELIVERY_TIME = "delivery_time";
+	final String MIN_PRICE = "min_price";
+	final String KM_PRICE = "km_price";
+	final String COMFORT_CLASS = "comfort_class";
+	final String STATUS = "status";
+	final String STATUS_VAL = "status_value";
+	final String ACTION = "action";
+	final String COORDINATES = "coordinates";
+	final String DESCRIPTION = "description";
 	final String FULL_NAME = "full_name";
 	final String TAXI_QUEUE = "taxi_queue";
 	final String TAXI_GUID = "taxi_guid";
+	
+	final String CONFIRM = "confirm";
+	final String SUCCESS = "success";
+	final String FAILED = "failed";
+	
+	final String FREE = "free";
+	final String BUSY = "busy";
+	
+	final String CONFIRMED = "confirmed";
+	final String COMPLETED = "completed";
+	final String NOT_ASSIGNED = "not_assigned";
+	final String CANCELED = "canceled";
+	
+	final String HAS_FREE = "has_free";
+	final String HAS_APPROPRIATE = "has_appropriate";
+	
+	final String YES = "yes";
+	final String NO = "no";
 	
 }

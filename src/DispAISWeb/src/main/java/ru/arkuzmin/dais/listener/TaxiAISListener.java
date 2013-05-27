@@ -23,15 +23,15 @@ public class TaxiAISListener implements MessageListener {
 			if (msg instanceof TextMessage) {
 				TextMessage txtMsg = (TextMessage) msg;
 
-				String action = txtMsg.getStringProperty(MsgProps.ACTION_PROP);
+				String action = txtMsg.getStringProperty(MsgProps.ACTION);
 
 				// Поступил ответ от таксиста
 				if ("reply".equals(action)) {
-					String status = txtMsg.getStringProperty(MsgProps.STATUS_PROP);
+					String status = txtMsg.getStringProperty(MsgProps.STATUS);
 					if ("free".equals(status)) {
 						status = "successfully completed!";
 					}
-					String coordinates = txtMsg.getStringProperty(MsgProps.COORDINATES_PROP);
+					String coordinates = txtMsg.getStringProperty(MsgProps.COORDINATES);
 					String applicationGuid = txtMsg.getJMSCorrelationID();
 						
 					ApplicationDAO appDao = new ApplicationDAO();

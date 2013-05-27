@@ -31,11 +31,11 @@ public class TaxiAISListener implements MessageListener {
 			if (msg instanceof TextMessage) {
 				TextMessage txtMsg = (TextMessage) msg;
 				
-				String action = txtMsg.getStringProperty(MsgProps.ACTION_PROP);
+				String action = txtMsg.getStringProperty(MsgProps.ACTION);
 				
 				// Получили ответ на запрос статуса
 				if ("reply".equals(action)) {
-					String status = txtMsg.getStringProperty(MsgProps.STATUS_PROP);
+					String status = txtMsg.getStringProperty(MsgProps.STATUS);
 					String taxiCorrId = txtMsg.getJMSCorrelationID();
 					
 					// Таксист свободен, делаем заказ
@@ -48,12 +48,12 @@ public class TaxiAISListener implements MessageListener {
 							Order order = dao.selectOrderDetailsByTaxi(taxiCorrId);
 							
 							Map<String, String> props = new LinkedHashMap<String, String>();
-							props.put(MsgProps.ACTION_PROP, "order");
-							props.put(MsgProps.ADDRESS_PROP, order.getAddress());
-							props.put(MsgProps.DELIVERY_TIME_PROP, order.getDeliveryTime());
-							props.put(MsgProps.MIN_PRICE_PROP, order.getMinPrice());
-							props.put(MsgProps.KM_PRICE_PROP, order.getKmPrice());
-							props.put(MsgProps.COMFORT_CLASS_PROP, order.getComfortClass());
+							props.put(MsgProps.ACTION, "order");
+							props.put(MsgProps.ADDRESS, order.getAddress());
+							props.put(MsgProps.DELIVERY_TIME, order.getDeliveryTime());
+							props.put(MsgProps.MIN_PRICE, order.getMinPrice());
+							props.put(MsgProps.KM_PRICE, order.getKmPrice());
+							props.put(MsgProps.COMFORT_CLASS, order.getComfortClass());
 							props.put(MsgProps.FULL_NAME, order.getFullName());
 							
 							MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, mqProps.getProperty("taxiReplyQueue"), txtMsg.getJMSCorrelationID());
@@ -62,7 +62,7 @@ public class TaxiAISListener implements MessageListener {
 					}
 				// Пришло подтверждение от таксиста	
 				} else if ("confirm".equals(action)) {
-					String status = txtMsg.getStringProperty(MsgProps.STATUS_PROP);
+					String status = txtMsg.getStringProperty(MsgProps.STATUS);
 					String taxiCorrId = txtMsg.getJMSCorrelationID();
 					
 					// Таксист успешно принял заказ
@@ -80,9 +80,9 @@ public class TaxiAISListener implements MessageListener {
 						
 						// Сообщаем об успешном заказе в диспетчерскую систему
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(MsgProps.ACTION_PROP, "confirm");
-						props.put(MsgProps.STATUS_PROP, "success");
-						props.put(MsgProps.DESCRIPTION_PROP, "taxi successfully ordered");
+						props.put(MsgProps.ACTION, "confirm");
+						props.put(MsgProps.STATUS, "success");
+						props.put(MsgProps.DESCRIPTION, "taxi successfully ordered");
 						props.put(MsgProps.TAXI_QUEUE, taxiQueue);
 						
 						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("taxiReplyQueue"), dispCorrId);
@@ -96,9 +96,9 @@ public class TaxiAISListener implements MessageListener {
 						
 						// Сообщаем об успешном завершении заказа в диспетчерскую систему
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(MsgProps.ACTION_PROP, "confirm");
-						props.put(MsgProps.STATUS_PROP, "completed");
-						props.put(MsgProps.DESCRIPTION_PROP, "order successfully completed");
+						props.put(MsgProps.ACTION, "confirm");
+						props.put(MsgProps.STATUS, "completed");
+						props.put(MsgProps.DESCRIPTION, "order successfully completed");
 						
 						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("taxiReplyQueue"), dispCorrId);
 					}

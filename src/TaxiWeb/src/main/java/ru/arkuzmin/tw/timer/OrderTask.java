@@ -39,9 +39,9 @@ public class OrderTask extends TimerTask {
 		if (n <= 0) {
 			dao.changeStatus(Globals.TaxiStatuses.free.name());
 			Map<String, String> properties = new LinkedHashMap<String, String>();
-			properties.put(MsgProps.ACTION_PROP, "confirm");
-			properties.put(MsgProps.STATUS_PROP, "completed");
-			properties.put(MsgProps.DESCRIPTION_PROP,
+			properties.put(MsgProps.ACTION, "confirm");
+			properties.put(MsgProps.STATUS, "completed");
+			properties.put(MsgProps.DESCRIPTION,
 					"order successfully completed");
 			
 			try {

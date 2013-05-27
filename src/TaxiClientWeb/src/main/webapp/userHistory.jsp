@@ -49,7 +49,7 @@
 					<td><c:out value="${order.deliveryTime}"/></td>
 					<td><c:out value="${order.kmPrice}"/></td>
 					<td><c:out value="${order.minPrice}"/></td>
-          <td><c:out value="${order.orderStatus}"/></td>
+          			<td><c:out value="${order.comfortClass}"/></td>
 					<td><c:out value="${order.orderDt}"/></td>
 					<td><c:out value="${order.orderStatus}"/></td>
 				</tr>

@@ -25,8 +25,6 @@ public class TaxiDAO {
 	
 	private static final String GET_GUID = "select car_guid from car";
 	
-	private static final String GET_NAME = "";
-	
 	/**
 	 * Возвращает текущий статус автомобиля.
 	 * @return

@@ -38,23 +38,23 @@ public class TaxiparkAISListener implements MessageListener {
 			if (msg instanceof TextMessage) {
 				txtMsg = (TextMessage) msg;
 
-				String action = txtMsg.getStringProperty("action");
+				String action = txtMsg.getStringProperty(MsgProps.ACTION);
 
 				// Получение текущего статуса такси
-				if (MsgProps.STATUS_PROP.equals(action)) {
+				if (MsgProps.ORDER.equals(action)) {
 					
 					TaxiDAO dao = new TaxiDAO();
 					String currentStatus = dao.checkStatus();
 					String coordinates = dao.getCoordinates();
 					
 					Map<String, String> props = new LinkedHashMap<String, String>();
-					props.put(MsgProps.ACTION_PROP, "reply");
-					props.put(MsgProps.STATUS_PROP, currentStatus);
-					props.put(MsgProps.COORDINATES_PROP, coordinates);
+					props.put(MsgProps.ACTION, MsgProps.REPLY);
+					props.put(MsgProps.STATUS, currentStatus);
+					props.put(MsgProps.COORDINATES, coordinates);
 					MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, mqProperties.getProperty("taxiTaxiparkInQueue"), txtMsg.getJMSCorrelationID());
 					
 				// Постановка новой задачи таксисту	
-				} else if  (MsgProps.ORDER_PROP.equals(action)) {
+				} else if  (MsgProps.ORDER.equals(action)) {
 					
 					TaxiDAO dao = new TaxiDAO();
 					String currentStatus = dao.checkStatus();
@@ -66,10 +66,10 @@ public class TaxiparkAISListener implements MessageListener {
 						Map<String, String> props = new LinkedHashMap<String, String>();
 						String taxiGuid = dao.getTaxiGuid();
 						
-						props.put(MsgProps.ACTION_PROP, "confirm");
+						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
 						props.put(MsgProps.TAXI_GUID, taxiGuid);
-						props.put(MsgProps.STATUS_PROP, "success");
-						props.put(MsgProps.DESCRIPTION_PROP, "taxi successfully ordered");
+						props.put(MsgProps.STATUS, MsgProps.SUCCESS);
+						props.put(MsgProps.DESCRIPTION, "taxi successfully ordered");
 						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
 						
 						// Считаем, что заказ завершен через 2 минуты
@@ -78,9 +78,9 @@ public class TaxiparkAISListener implements MessageListener {
 					// Иначе - отказ
 					} else {
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(MsgProps.ACTION_PROP, "confirm");
-						props.put(MsgProps.STATUS_PROP, "failed");
-						props.put(MsgProps.DESCRIPTION_PROP, "taxi is already ordered");
+						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
+						props.put(MsgProps.STATUS, MsgProps.FAILED);
+						props.put(MsgProps.DESCRIPTION, "taxi is busy now");
 						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props,  mqProperties.getProperty("taxiTaxiparkInQueue"), txtMsg.getJMSCorrelationID());
 					}
 					

@@ -34,16 +34,38 @@ public class DispAISListener implements MessageListener {
 			if (msg instanceof TextMessage) {
 				TextMessage txtMsg = (TextMessage) msg;
 				
-				String action = txtMsg.getStringProperty(MsgProps.ACTION_PROP);
+				String action = txtMsg.getStringProperty(MsgProps.ACTION);
+				String status = txtMsg.getStringProperty(MsgProps.STATUS);
 				
-				// Поступил заказ от пользователя
-				if (MsgProps.ORDER_PROP.equals(action)) {
+				// Подтверждаем заказ от пользователя
+				if (MsgProps.ORDER.equals(action) && MsgProps.CONFIRM.equals(status)) {
 					
-					String address = txtMsg.getStringProperty(MsgProps.ADDRESS_PROP);
-					String deliveryTime = txtMsg.getStringProperty(MsgProps.DELIVERY_TIME_PROP);
-					String minPrice = txtMsg.getStringProperty(MsgProps.MIN_PRICE_PROP);
-					String kmPrice = txtMsg.getStringProperty(MsgProps.KM_PRICE_PROP);
-					String comfortClass = txtMsg.getStringProperty(MsgProps.COMFORT_CLASS_PROP);
+					String address = txtMsg.getStringProperty(MsgProps.ADDRESS);
+					String deliveryTime = txtMsg.getStringProperty(MsgProps.DELIVERY_TIME);
+					String minPrice = txtMsg.getStringProperty(MsgProps.MIN_PRICE);
+					String kmPrice = txtMsg.getStringProperty(MsgProps.KM_PRICE);
+					String comfortClass = txtMsg.getStringProperty(MsgProps.COMFORT_CLASS);
+					
+					Map<String, String> props = new LinkedHashMap<String, String>();
+					props.put(MsgProps.ADDRESS, address);
+					props.put(MsgProps.DELIVERY_TIME, deliveryTime);
+					props.put(MsgProps.MIN_PRICE, minPrice);
+					props.put(MsgProps.KM_PRICE, kmPrice);
+					props.put(MsgProps.COMFORT_CLASS, comfortClass);
+					
+					String taxiQueue = txtMsg.getStringProperty(MsgProps.TAXI_QUEUE);
+					
+					MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
+					
+				
+				// Поступил заказ от пользователя, проверяем свободных таксистов
+				} else 	if (MsgProps.ORDER.equals(action) && MsgProps.STATUS.equals(status)) {
+					
+					String address = txtMsg.getStringProperty(MsgProps.ADDRESS);
+					String deliveryTime = txtMsg.getStringProperty(MsgProps.DELIVERY_TIME);
+					String minPrice = txtMsg.getStringProperty(MsgProps.MIN_PRICE);
+					String kmPrice = txtMsg.getStringProperty(MsgProps.KM_PRICE);
+					String comfortClass = txtMsg.getStringProperty(MsgProps.COMFORT_CLASS);
 					
 					String taxiCorrID = UUID.randomUUID().toString();
 					String orderGuid = UUID.randomUUID().toString();
@@ -66,16 +88,16 @@ public class DispAISListener implements MessageListener {
 					// Нет автомобилей, удовлетворяющих условиям поиска
 					if (cars == null || cars.isEmpty()) {
 						Map<String, String> props = new LinkedHashMap<String, String>();
-						props.put(MsgProps.ACTION_PROP, "confirm");
-						props.put(MsgProps.STATUS_PROP, "failed");
-						props.put(MsgProps.DESCRIPTION_PROP, "no taxi cars available with this search conditions");
+						props.put(MsgProps.ACTION, "confirm");
+						props.put(MsgProps.STATUS, "failed");
+						props.put(MsgProps.DESCRIPTION, "no taxi cars available with this search conditions");
 						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
 					
 					// Опрашиваем все найденные автомобили
 					} else {
 						for (Car car : cars) {
 							Map<String, String> props = new LinkedHashMap<String, String>();
-							props.put(MsgProps.ACTION_PROP, "status");
+							props.put(MsgProps.ACTION, "status");
 							MsgSender.sendMessage(car.getQueueID(), null, props, mqProps.getProperty("taxiReplyQueue"), taxiCorrID);
 						}
 					}	

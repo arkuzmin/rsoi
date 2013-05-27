@@ -44,7 +44,7 @@ public class StatusCacheTask extends TimerTask {
 		// Нужно еще кэшировать
 		if (!"free".equals(status)) {
 			Map<String, String> properties = new LinkedHashMap<String, String>();
-			properties.put(MsgProps.ACTION_PROP, "status");
+			properties.put(MsgProps.ACTION, "status");
 			
 			try {
 				MsgSender.sendMessage(dest, null, properties, mqProps.getProperty("dispTaxiQueue"), correlationID);
