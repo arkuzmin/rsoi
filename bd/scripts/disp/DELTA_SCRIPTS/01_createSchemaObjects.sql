@@ -10,7 +10,7 @@ create table rsoi_disp.taxiparks (
 insert into rsoi_disp.taxiparks (taxipark_guid, taxipark_queue) values ('947a24f8-ead8-4820-984a-108b241bdbbc', 'TAXIPARK1.DISP.IN');
 insert into rsoi_disp.taxiparks (taxipark_guid, taxipark_queue) values ('8113c1a7-75d8-4c3a-9757-5d5dccf26a41', 'TAXIPARK2.DISP.IN');
 
--- Таблица зарегистрированных пользователей
+-- Г’Г ГЎГ«ГЁГ¶Г  Г§Г Г°ГҐГЈГЁГ±ГІГ°ГЁГ°Г®ГўГ Г­Г­Г»Гµ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ©
 create table rsoi_disp.USER (
 	USER_GUID VARCHAR(200) NOT NULL,
 	USER_LOGIN VARCHAR(100) NOT NULL,
@@ -24,11 +24,11 @@ create table rsoi_disp.USER (
 	INDEX USER_LOGIN_IDX (USER_LOGIN ASC) )
 
 
-	COMMENT = 'Зарегистрированные пользователи диспетчерской АИС';
+	COMMENT = 'Г‡Г Г°ГҐГЈГЁГ±ГІГ°ГЁГ°Г®ГўГ Г­Г­Г»ГҐ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГЁ Г¤ГЁГ±ГЇГҐГІГ·ГҐГ°Г±ГЄГ®Г© ГЂГ€Г‘';
     
 ALTER TABLE RSOI_DISP.USER ADD UNIQUE (USER_LOGIN);
 
--- Незарегистрированные пользователи диспетчерской АИС
+-- ГЌГҐГ§Г Г°ГҐГЈГЁГ±ГІГ°ГЁГ°Г®ГўГ Г­Г­Г»ГҐ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГЁ Г¤ГЁГ±ГЇГҐГІГ·ГҐГ°Г±ГЄГ®Г© ГЂГ€Г‘
 create table rsoi_disp.GUEST (
 	GUEST_GUID VARCHAR(200) NOT NULL, 
 	GUEST_CODE VARCHAR(200) NOT NULL,
@@ -37,10 +37,10 @@ create table rsoi_disp.GUEST (
 	PRIMARY KEY(GUEST_GUID),
 	INDEX GUEST_CODE_IDX(GUEST_CODE ASC))
 
-COMMENT = 'Незарегистрированные пользователи Диспетчерской АИС'; 
+COMMENT = 'ГЌГҐГ§Г Г°ГҐГЈГЁГ±ГІГ°ГЁГ°Г®ГўГ Г­Г­Г»ГҐ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГЁ Г„ГЁГ±ГЇГҐГІГ·ГҐГ°Г±ГЄГ®Г© ГЂГ€Г‘'; 
 
 
--- Детали заявки
+-- Г„ГҐГІГ Г«ГЁ Г§Г ГїГўГЄГЁ
 CREATE TABLE RSOI_DISP.ORDER_DETAILS (
 	ORDER_DETAIL_GUID VARCHAR(200) NOT NULL,
 	ADDRESS VARCHAR(500) NOT NULL,
@@ -56,9 +56,9 @@ CREATE TABLE RSOI_DISP.ORDER_DETAILS (
 	INDEX STATUS_IDX(ORDER_STATUS ASC)
 )
 
-COMMENT = 'Детали заявки';
+COMMENT = 'Г„ГҐГІГ Г«ГЁ Г§Г ГїГўГЄГЁ';
 
--- Подтвержденные заявки зарегистрированных пользователей
+-- ГЏГ®Г¤ГІГўГҐГ°Г¦Г¤ГҐГ­Г­Г»ГҐ Г§Г ГїГўГЄГЁ Г§Г Г°ГҐГЈГЁГ±ГІГ°ГЁГ°Г®ГўГ Г­Г­Г»Гµ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ©
 CREATE TABLE  RSOI_DISP.USER_ORDERS (
 	ORDER_GUID VARCHAR(200) NOT NULL,
 	ORDER_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -73,9 +73,9 @@ CREATE TABLE  RSOI_DISP.USER_ORDERS (
 	INDEX ORDER_DETAIL_ID_IDX(ORDER_DETAIL_GUID ASC)
 )
 
-COMMENT  = 'Подтвержденные заявки зарегистрированных пользователей';
+COMMENT  = 'ГЏГ®Г¤ГІГўГҐГ°Г¦Г¤ГҐГ­Г­Г»ГҐ Г§Г ГїГўГЄГЁ Г§Г Г°ГҐГЈГЁГ±ГІГ°ГЁГ°Г®ГўГ Г­Г­Г»Гµ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ©';
 
--- Подтвержденные заказа незарегистрированных пользователей
+-- ГЏГ®Г¤ГІГўГҐГ°Г¦Г¤ГҐГ­Г­Г»ГҐ Г§Г ГЄГ Г§Г  Г­ГҐГ§Г Г°ГҐГЈГЁГ±ГІГ°ГЁГ°Г®ГўГ Г­Г­Г»Гµ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ©
 CREATE TABLE RSOI_DISP.GUEST_ORDERS (
 	ORDER_GUID VARCHAR(200) NOT NULL,
 	ORDER_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -90,9 +90,9 @@ CREATE TABLE RSOI_DISP.GUEST_ORDERS (
 	INDEX ORDER_DETAIL_ID_IDX(ORDER_DETAIL_GUID ASC)
 )
 
-COMMENT = 'Подтвержденные заказа незарегистрированных пользователей';
+COMMENT = 'ГЏГ®Г¤ГІГўГҐГ°Г¦Г¤ГҐГ­Г­Г»ГҐ Г§Г ГЄГ Г§Г  Г­ГҐГ§Г Г°ГҐГЈГЁГ±ГІГ°ГЁГ°Г®ГўГ Г­Г­Г»Гµ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ©';
 
--- Поступившие и еще не подтвержденные заявки пользователей
+-- ГЏГ®Г±ГІГіГЇГЁГўГёГЁГҐ ГЁ ГҐГ№ГҐ Г­ГҐ ГЇГ®Г¤ГІГўГҐГ°Г¦Г¤ГҐГ­Г­Г»ГҐ Г§Г ГїГўГЄГЁ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ©
 CREATE TABLE RSOI_DISP.APPLICATION (
 	APPLICATION_GUID VARCHAR(200) NOT NULL,
 	APPLICATION_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -105,8 +105,19 @@ CREATE TABLE RSOI_DISP.APPLICATION (
 	PRIMARY KEY(APPLICATION_GUID)
 )
 
-COMMENT 'Поступившие и еще не подтвержденные заявки пользователей';
+COMMENT 'ГЏГ®Г±ГІГіГЇГЁГўГёГЁГҐ ГЁ ГҐГ№ГҐ Г­ГҐ ГЇГ®Г¤ГІГўГҐГ°Г¦Г¤ГҐГ­Г­Г»ГҐ Г§Г ГїГўГЄГЁ ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ©';
 
 ALTER TABLE RSOI_DISP.APPLICATION ADD CONSTRAINT REQUESTRER_ORDER_CNSTR UNIQUE (REQUESTER_GUID, ORDER_DETAIL_GUID);
 
+
+create table rsoi_disp.taxipark_reply (
+	application_guid varchar(200) not null,
+	taxipark_guid varchar(200) not null,
+	reply varchar(100) not null default 'unknown',
+	reply_count integer not null default 0,
+
+	constraint unique (application_guid, taxipark_guid)
+);
+
 --drop schema rsoi_disp;
+

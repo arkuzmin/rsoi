@@ -18,6 +18,8 @@ import ru.arkuzmin.common.MsgSender;
 import ru.arkuzmin.common.PropertiesLoader;
 import ru.arkuzmin.dais.common.CommonUtils;
 import ru.arkuzmin.dais.dao.ApplicationDAO;
+import ru.arkuzmin.dais.dao.TaxiparkDAO;
+import ru.arkuzmin.dais.dao.TaxiparkReplyDAO;
 import ru.arkuzmin.dais.dto.Order;
 import ru.arkuzmin.dais.timer.StatusCache;
 
@@ -60,6 +62,32 @@ public class TaxiparkAISListener implements MessageListener {
 					if (MsgProps.FAILED.equals(status)) {
 						
 						String application_guid = txtMsg.getJMSCorrelationID();
+						String taxipark_guid = txtMsg.getStringProperty(MsgProps.TAXIPARK_GUID);
+						String hasFree = txtMsg.getStringProperty(MsgProps.HAS_FREE);
+						String hasAppropriate = txtMsg.getStringProperty(MsgProps.HAS_APPROPRIATE);
+						
+						// Есть подходящие таксисты, но пока нет свободных
+						if (MsgProps.YES.equals(hasAppropriate) && MsgProps.NO.equals(hasFree)) {
+							TaxiparkDAO tpDAO = new TaxiparkDAO();
+							TaxiparkReplyDAO tprDAO = new TaxiparkReplyDAO();
+							
+							tprDAO.addNewReply(application_guid, taxipark_guid, MsgProps.BUSY);
+							
+							int taxiparkCount = tpDAO.getTaxiparkCount();
+							int replyCountB = tprDAO.getReplyCount(application_guid, MsgProps.BUSY);
+							int replyCountN = tprDAO.getReplyCount(application_guid, MsgProps.NO_APPROPRIATE);
+							int replyCount = replyCountB + replyCountN;
+							
+							// Если ответили уже все таксисты
+							if (taxiparkCount == replyCount) {
+								
+							}
+							
+						// Нет подходящих таксистов
+						} else if (MsgProps.NO.equals(hasAppropriate)) {
+							
+							
+						}
 						
 						Order order = new Order();
 						order.setOrderGUID(application_guid);

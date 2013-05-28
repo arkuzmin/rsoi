@@ -18,6 +18,34 @@ public class TaxiparkDAO {
 	
 	private static final String GET_TAXIPARKS = "select taxipark_guid, taxipark_queue from taxiparks";
 	
+	private static final String GET_TAXIPARK_COUNT = "select count(*) from taxiparks";
+	
+	
+	public int getTaxiparkCount() {
+		int result = -1;
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(GET_TAXIPARK_COUNT);
+			
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+		
+		return result;
+	}
+	
 	public Map<String, String> getTaxiparks() {
 		Map<String, String> result = new LinkedHashMap<String, String>();
 		Connection conn = null;

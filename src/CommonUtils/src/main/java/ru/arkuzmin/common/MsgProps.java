@@ -17,6 +17,7 @@ public interface MsgProps {
 	final String FULL_NAME = "full_name";
 	final String TAXI_QUEUE = "taxi_queue";
 	final String TAXI_GUID = "taxi_guid";
+	final String TAXIPARK_GUID = "taxipark_guid";
 	
 	final String CONFIRM = "confirm";
 	final String SUCCESS = "success";
@@ -24,6 +25,7 @@ public interface MsgProps {
 	
 	final String FREE = "free";
 	final String BUSY = "busy";
+	final String NO_APPROPRIATE = "no_appropriate";
 	
 	final String CONFIRMED = "confirmed";
 	final String COMPLETED = "completed";
