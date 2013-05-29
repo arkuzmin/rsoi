@@ -89,6 +89,15 @@
 		<url-pattern>/redirect/*</url-pattern>
 	</servlet-mapping>
 	<servlet>
+		<servlet-name>Cancel</servlet-name>
+		<servlet-class>ru.arkuzmin.tcw.model.DAISCancelOrderServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Cancel</servlet-name>
+		<url-pattern>/cancel/*</url-pattern>
+	</servlet-mapping>
+	<servlet>
 		<servlet-name>LogOut</servlet-name>
 		<servlet-class>ru.arkuzmin.tcw.model.LogOutServlet
 		</servlet-class>

@@ -10,7 +10,6 @@ create table rsoi_disp.taxiparks (
 insert into rsoi_disp.taxiparks (taxipark_guid, taxipark_queue) values ('947a24f8-ead8-4820-984a-108b241bdbbc', 'TAXIPARK1.DISP.IN');
 insert into rsoi_disp.taxiparks (taxipark_guid, taxipark_queue) values ('8113c1a7-75d8-4c3a-9757-5d5dccf26a41', 'TAXIPARK2.DISP.IN');
 
--- Òàáëèöà çàðåãèñòðèðîâàííûõ ïîëüçîâàòåëåé
 create table rsoi_disp.USER (
 	USER_GUID VARCHAR(200) NOT NULL,
 	USER_LOGIN VARCHAR(100) NOT NULL,
@@ -21,26 +20,19 @@ create table rsoi_disp.USER (
 	LAST_UPDATE_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(USER_GUID),
-	INDEX USER_LOGIN_IDX (USER_LOGIN ASC) )
-
-
-	COMMENT = 'Çàðåãèñòðèðîâàííûå ïîëüçîâàòåëè äèñïåò÷åðñêîé ÀÈÑ';
+	INDEX USER_LOGIN_IDX (USER_LOGIN ASC) );
     
 ALTER TABLE RSOI_DISP.USER ADD UNIQUE (USER_LOGIN);
 
--- Íåçàðåãèñòðèðîâàííûå ïîëüçîâàòåëè äèñïåò÷åðñêîé ÀÈÑ
 create table rsoi_disp.GUEST (
 	GUEST_GUID VARCHAR(200) NOT NULL, 
 	GUEST_CODE VARCHAR(200) NOT NULL,
 	LAST_UPDATE_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 	PRIMARY KEY(GUEST_GUID),
-	INDEX GUEST_CODE_IDX(GUEST_CODE ASC))
-
-COMMENT = 'Íåçàðåãèñòðèðîâàííûå ïîëüçîâàòåëè Äèñïåò÷åðñêîé ÀÈÑ'; 
+	INDEX GUEST_CODE_IDX(GUEST_CODE ASC)); 
 
 
--- Äåòàëè çàÿâêè
 CREATE TABLE RSOI_DISP.ORDER_DETAILS (
 	ORDER_DETAIL_GUID VARCHAR(200) NOT NULL,
 	ADDRESS VARCHAR(500) NOT NULL,
@@ -54,11 +46,9 @@ CREATE TABLE RSOI_DISP.ORDER_DETAILS (
 	PRIMARY KEY(ORDER_DETAIL_GUID),
 	INDEX DELIVERY_TIME_IDX(DELIVERY_TIME ASC),
 	INDEX STATUS_IDX(ORDER_STATUS ASC)
-)
+);
 
-COMMENT = 'Äåòàëè çàÿâêè';
 
--- Ïîäòâåðæäåííûå çàÿâêè çàðåãèñòðèðîâàííûõ ïîëüçîâàòåëåé
 CREATE TABLE  RSOI_DISP.USER_ORDERS (
 	ORDER_GUID VARCHAR(200) NOT NULL,
 	ORDER_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -71,11 +61,8 @@ CREATE TABLE  RSOI_DISP.USER_ORDERS (
 
 	INDEX USER_ID_IDX(USER_GUID ASC),
 	INDEX ORDER_DETAIL_ID_IDX(ORDER_DETAIL_GUID ASC)
-)
+);
 
-COMMENT  = 'Ïîäòâåðæäåííûå çàÿâêè çàðåãèñòðèðîâàííûõ ïîëüçîâàòåëåé';
-
--- Ïîäòâåðæäåííûå çàêàçà íåçàðåãèñòðèðîâàííûõ ïîëüçîâàòåëåé
 CREATE TABLE RSOI_DISP.GUEST_ORDERS (
 	ORDER_GUID VARCHAR(200) NOT NULL,
 	ORDER_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -88,11 +75,8 @@ CREATE TABLE RSOI_DISP.GUEST_ORDERS (
 
 	INDEX GUEST_ID_IDX(GUEST_GUID ASC),
 	INDEX ORDER_DETAIL_ID_IDX(ORDER_DETAIL_GUID ASC)
-)
+);
 
-COMMENT = 'Ïîäòâåðæäåííûå çàêàçà íåçàðåãèñòðèðîâàííûõ ïîëüçîâàòåëåé';
-
--- Ïîñòóïèâøèå è åùå íå ïîäòâåðæäåííûå çàÿâêè ïîëüçîâàòåëåé
 CREATE TABLE RSOI_DISP.APPLICATION (
 	APPLICATION_GUID VARCHAR(200) NOT NULL,
 	APPLICATION_DT TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -100,12 +84,11 @@ CREATE TABLE RSOI_DISP.APPLICATION (
 	REQUESTER_GUID VARCHAR(200) NOT NULL,
 	ORDER_DETAIL_GUID VARCHAR(200) NOT NULL,
 	USER_IDENTIFIER CHAR(1) NOT NULL,
-  taxi_queue varchar(100) not null,
+	taxipark_queue varchar(100) not null,
+	taxi_queue varchar(100) not null,
 
 	PRIMARY KEY(APPLICATION_GUID)
-)
-
-COMMENT 'Ïîñòóïèâøèå è åùå íå ïîäòâåðæäåííûå çàÿâêè ïîëüçîâàòåëåé';
+);
 
 ALTER TABLE RSOI_DISP.APPLICATION ADD CONSTRAINT REQUESTRER_ORDER_CNSTR UNIQUE (REQUESTER_GUID, ORDER_DETAIL_GUID);
 
@@ -120,4 +103,5 @@ create table rsoi_disp.taxipark_reply (
 );
 
 --drop schema rsoi_disp;
+
 

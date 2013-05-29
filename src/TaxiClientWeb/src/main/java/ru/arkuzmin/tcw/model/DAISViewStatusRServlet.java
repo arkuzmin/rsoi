@@ -37,7 +37,7 @@ public class DAISViewStatusRServlet extends HttpServlet {
 			
 			User user = (User) request.getSession().getAttribute("user");
 			Status status = port.getStatus(user.getGuid(), "R");
-			request.getSession().setAttribute("currentStatus", status);
+			request.getSession().setAttribute("currentStatus", status.getOrder() == null ? null : status);
 			RequestDispatcher disp = getServletContext().getRequestDispatcher("/status.jsp");
 			if (disp != null) {
 				disp.forward(request, response);

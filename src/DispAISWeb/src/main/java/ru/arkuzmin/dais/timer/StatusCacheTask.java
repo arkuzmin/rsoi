@@ -42,7 +42,7 @@ public class StatusCacheTask extends TimerTask {
 		String status = odDao.checkStatus(orderDetailGuid);
 		
 		// Нужно еще кэшировать
-		if (!MsgProps.COMPLETED.equals(status)) {
+		if (!(MsgProps.COMPLETED.equals(status) || MsgProps.CANCELED.equals(status))) {
 			Map<String, String> properties = new LinkedHashMap<String, String>();
 			properties.put(MsgProps.ACTION, MsgProps.STATUS);
 			

@@ -28,4 +28,6 @@ public interface DAISWebService {
 	public Status getStatus(String guid, String userIdentifier) ;
 	@WebMethod
 	public String addGuestApplication(Order order);
+	@WebMethod
+	public boolean cancelOrder(Order order);
 }

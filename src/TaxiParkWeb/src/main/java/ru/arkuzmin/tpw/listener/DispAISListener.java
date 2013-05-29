@@ -1,6 +1,7 @@
 package ru.arkuzmin.tpw.listener;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -110,6 +111,20 @@ public class DispAISListener implements MessageListener {
 							MsgSender.sendMessage(car.getQueueID(), null, props, mqProps.getProperty("taxiReplyQueue"), taxiCorrID);
 						}
 					}	
+				// Отменяем заказ
+				} else if (MsgProps.CANCEL.equals(action)) {
+					String taxiQueue = txtMsg.getStringProperty(MsgProps.TAXI_QUEUE);
+					String dispCorrId = txtMsg.getJMSCorrelationID();
+					
+					RouterDAO dao = new RouterDAO();
+					Map<String, String> route = dao.getRouteByDisp(dispCorrId);
+					String taxiCorrId = (new LinkedList<String>(route.keySet())).get(0);
+					
+					Map<String, String> props = new LinkedHashMap<String, String>();
+					props.put(MsgProps.ACTION, MsgProps.CANCEL);
+					
+					// Отправляет запрос на отмену таксистам
+					MsgSender.sendMessage(taxiQueue, null, props, mqProps.getProperty("taxiReplyQueue"), taxiCorrId);
 					
 				} else {
 					throw new BadMessageException("Incorrect message for the TAXI system, field action = " + action);

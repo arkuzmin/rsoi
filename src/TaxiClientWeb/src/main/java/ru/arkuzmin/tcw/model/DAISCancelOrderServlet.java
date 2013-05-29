@@ -8,13 +8,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import ru.arkuzmin.dais.model.DAISWebService;
 import ru.arkuzmin.dais.model.DAISWebServiceImplService;
+import ru.arkuzmin.dais.model.Order;
 import ru.arkuzmin.dais.model.Status;
+import ru.arkuzmin.tcw.common.CommonUtils;
 
-public class DAISViewStatusNRServlet extends HttpServlet {
+public class DAISCancelOrderServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 3483165794267827943L;
+	private static final long serialVersionUID = -9199203518160847279L;
+	
+	private static final Logger logger = CommonUtils.getLogger();
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -25,23 +31,28 @@ public class DAISViewStatusNRServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		processRequest(request, response);
 	}
-
+	
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			DAISWebServiceImplService service = new DAISWebServiceImplService();
 			DAISWebService port = service.getDAISWebServiceImplPort();
 			
-			String code = request.getParameter("code");
+			Status status = (Status) request.getSession().getAttribute("currentStatus");
+			Order order = status.getOrder();
 			
-			Status status = port.getStatus(code, "G");
-			request.getSession().setAttribute("currentStatus", status.getOrder() == null ? null : status);
-			RequestDispatcher disp = getServletContext().getRequestDispatcher("/status.jsp");
-			if (disp != null) {
+			boolean result = port.cancelOrder(order);
+			
+			
+			if (result) {
+				RequestDispatcher disp = getServletContext().getRequestDispatcher("/success.jsp");
+				request.getSession().setAttribute("successMsg", "Операция отмены заказа успешно принята в обработку");
 				disp.forward(request, response);
 			}
-
+			
+			
 		} catch (Exception e) {
-			request.getSession().setAttribute("errorMsg", "Не получить статус текущего заказа, удаленный сервер не отвечает.");
+			logger.error("Error", e);
+			request.getSession().setAttribute("errorMsg", "Произошла ошибка при попытке отмены заказа. Удаленный сервер не отвечает");
 			RequestDispatcher disp = getServletContext().getRequestDispatcher("/error.jsp");
 			if (disp != null) {
 				disp.forward(request, response);

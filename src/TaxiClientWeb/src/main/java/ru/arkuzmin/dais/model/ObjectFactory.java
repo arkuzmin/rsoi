@@ -27,6 +27,7 @@ public class ObjectFactory {
     private final static QName _AuthorizeUser_QNAME = new QName("http://model.dais.arkuzmin.ru/", "authorizeUser");
     private final static QName _ConfirmApplicationResponse_QNAME = new QName("http://model.dais.arkuzmin.ru/", "confirmApplicationResponse");
     private final static QName _GetUserHistory_QNAME = new QName("http://model.dais.arkuzmin.ru/", "getUserHistory");
+    private final static QName _CancelOrderResponse_QNAME = new QName("http://model.dais.arkuzmin.ru/", "cancelOrderResponse");
     private final static QName _AddGuestApplicationResponse_QNAME = new QName("http://model.dais.arkuzmin.ru/", "addGuestApplicationResponse");
     private final static QName _AddGuestApplication_QNAME = new QName("http://model.dais.arkuzmin.ru/", "addGuestApplication");
     private final static QName _GetStatus_QNAME = new QName("http://model.dais.arkuzmin.ru/", "getStatus");
@@ -36,6 +37,7 @@ public class ObjectFactory {
     private final static QName _AuthorizeUserResponse_QNAME = new QName("http://model.dais.arkuzmin.ru/", "authorizeUserResponse");
     private final static QName _RegisterNewUser_QNAME = new QName("http://model.dais.arkuzmin.ru/", "registerNewUser");
     private final static QName _RegisterNewUserResponse_QNAME = new QName("http://model.dais.arkuzmin.ru/", "registerNewUserResponse");
+    private final static QName _CancelOrder_QNAME = new QName("http://model.dais.arkuzmin.ru/", "cancelOrder");
     private final static QName _GetUserHistoryResponse_QNAME = new QName("http://model.dais.arkuzmin.ru/", "getUserHistoryResponse");
     private final static QName _ConfirmApplication_QNAME = new QName("http://model.dais.arkuzmin.ru/", "confirmApplication");
 
@@ -47,91 +49,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConfirmApplication }
+     * Create an instance of {@link User }
      * 
      */
-    public ConfirmApplication createConfirmApplication() {
-        return new ConfirmApplication();
-    }
-
-    /**
-     * Create an instance of {@link RegisterNewUserResponse }
-     * 
-     */
-    public RegisterNewUserResponse createRegisterNewUserResponse() {
-        return new RegisterNewUserResponse();
-    }
-
-    /**
-     * Create an instance of {@link Order }
-     * 
-     */
-    public Order createOrder() {
-        return new Order();
-    }
-
-    /**
-     * Create an instance of {@link Status }
-     * 
-     */
-    public Status createStatus() {
-        return new Status();
-    }
-
-    /**
-     * Create an instance of {@link RegisterNewUser }
-     * 
-     */
-    public RegisterNewUser createRegisterNewUser() {
-        return new RegisterNewUser();
-    }
-
-    /**
-     * Create an instance of {@link ConfirmApplicationResponse }
-     * 
-     */
-    public ConfirmApplicationResponse createConfirmApplicationResponse() {
-        return new ConfirmApplicationResponse();
-    }
-
-    /**
-     * Create an instance of {@link AddGuestApplication }
-     * 
-     */
-    public AddGuestApplication createAddGuestApplication() {
-        return new AddGuestApplication();
-    }
-
-    /**
-     * Create an instance of {@link AddUserApplication }
-     * 
-     */
-    public AddUserApplication createAddUserApplication() {
-        return new AddUserApplication();
-    }
-
-    /**
-     * Create an instance of {@link AuthorizeUserResponse }
-     * 
-     */
-    public AuthorizeUserResponse createAuthorizeUserResponse() {
-        return new AuthorizeUserResponse();
-    }
-
-    /**
-     * Create an instance of {@link AuthorizeUser }
-     * 
-     */
-    public AuthorizeUser createAuthorizeUser() {
-        return new AuthorizeUser();
-    }
-
-    /**
-     * Create an instance of {@link GetUserHistoryResponse }
-     * 
-     */
-    public GetUserHistoryResponse createGetUserHistoryResponse() {
-        return new GetUserHistoryResponse();
+    public User createUser() {
+        return new User();
     }
 
     /**
@@ -143,11 +65,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetUserHistory }
+     * Create an instance of {@link AddGuestApplicationResponse }
      * 
      */
-    public GetUserHistory createGetUserHistory() {
-        return new GetUserHistory();
+    public AddGuestApplicationResponse createAddGuestApplicationResponse() {
+        return new AddGuestApplicationResponse();
     }
 
     /**
@@ -159,27 +81,123 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AuthorizeUserResponse }
+     * 
+     */
+    public AuthorizeUserResponse createAuthorizeUserResponse() {
+        return new AuthorizeUserResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetUserHistoryResponse }
+     * 
+     */
+    public GetUserHistoryResponse createGetUserHistoryResponse() {
+        return new GetUserHistoryResponse();
+    }
+
+    /**
+     * Create an instance of {@link ConfirmApplication }
+     * 
+     */
+    public ConfirmApplication createConfirmApplication() {
+        return new ConfirmApplication();
+    }
+
+    /**
+     * Create an instance of {@link CancelOrderResponse }
+     * 
+     */
+    public CancelOrderResponse createCancelOrderResponse() {
+        return new CancelOrderResponse();
+    }
+
+    /**
+     * Create an instance of {@link CancelOrder }
+     * 
+     */
+    public CancelOrder createCancelOrder() {
+        return new CancelOrder();
+    }
+
+    /**
+     * Create an instance of {@link GetUserHistory }
+     * 
+     */
+    public GetUserHistory createGetUserHistory() {
+        return new GetUserHistory();
+    }
+
+    /**
+     * Create an instance of {@link RegisterNewUserResponse }
+     * 
+     */
+    public RegisterNewUserResponse createRegisterNewUserResponse() {
+        return new RegisterNewUserResponse();
+    }
+
+    /**
+     * Create an instance of {@link Status }
+     * 
+     */
+    public Status createStatus() {
+        return new Status();
+    }
+
+    /**
+     * Create an instance of {@link AddUserApplication }
+     * 
+     */
+    public AddUserApplication createAddUserApplication() {
+        return new AddUserApplication();
+    }
+
+    /**
+     * Create an instance of {@link AuthorizeUser }
+     * 
+     */
+    public AuthorizeUser createAuthorizeUser() {
+        return new AuthorizeUser();
+    }
+
+    /**
+     * Create an instance of {@link ConfirmApplicationResponse }
+     * 
+     */
+    public ConfirmApplicationResponse createConfirmApplicationResponse() {
+        return new ConfirmApplicationResponse();
+    }
+
+    /**
+     * Create an instance of {@link RegisterNewUser }
+     * 
+     */
+    public RegisterNewUser createRegisterNewUser() {
+        return new RegisterNewUser();
+    }
+
+    /**
+     * Create an instance of {@link Order }
+     * 
+     */
+    public Order createOrder() {
+        return new Order();
+    }
+
+    /**
+     * Create an instance of {@link AddGuestApplication }
+     * 
+     */
+    public AddGuestApplication createAddGuestApplication() {
+        return new AddGuestApplication();
+    }
+
+    /**
      * Create an instance of {@link AddUserApplicationResponse }
      * 
      */
     public AddUserApplicationResponse createAddUserApplicationResponse() {
         return new AddUserApplicationResponse();
-    }
-
-    /**
-     * Create an instance of {@link User }
-     * 
-     */
-    public User createUser() {
-        return new User();
-    }
-
-    /**
-     * Create an instance of {@link AddGuestApplicationResponse }
-     * 
-     */
-    public AddGuestApplicationResponse createAddGuestApplicationResponse() {
-        return new AddGuestApplicationResponse();
     }
 
     /**
@@ -207,6 +225,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://model.dais.arkuzmin.ru/", name = "getUserHistory")
     public JAXBElement<GetUserHistory> createGetUserHistory(GetUserHistory value) {
         return new JAXBElement<GetUserHistory>(_GetUserHistory_QNAME, GetUserHistory.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CancelOrderResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://model.dais.arkuzmin.ru/", name = "cancelOrderResponse")
+    public JAXBElement<CancelOrderResponse> createCancelOrderResponse(CancelOrderResponse value) {
+        return new JAXBElement<CancelOrderResponse>(_CancelOrderResponse_QNAME, CancelOrderResponse.class, null, value);
     }
 
     /**
@@ -288,6 +315,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://model.dais.arkuzmin.ru/", name = "registerNewUserResponse")
     public JAXBElement<RegisterNewUserResponse> createRegisterNewUserResponse(RegisterNewUserResponse value) {
         return new JAXBElement<RegisterNewUserResponse>(_RegisterNewUserResponse_QNAME, RegisterNewUserResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CancelOrder }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://model.dais.arkuzmin.ru/", name = "cancelOrder")
+    public JAXBElement<CancelOrder> createCancelOrder(CancelOrder value) {
+        return new JAXBElement<CancelOrder>(_CancelOrder_QNAME, CancelOrder.class, null, value);
     }
 
     /**

@@ -86,7 +86,17 @@ public class TaxiparkAISListener implements MessageListener {
 						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props,  mqProperties.getProperty("taxiTaxiparkInQueue"), txtMsg.getJMSCorrelationID());
 					}
 					
+				// Отмена заказа
+				} else if (MsgProps.CANCEL.equals(action)) {
+					TaxiDAO dao = new TaxiDAO();
+					dao.changeStatus(MsgProps.FREE);
 					
+					Map<String, String> props = new LinkedHashMap<String, String>();
+					props.put(MsgProps.ACTION, MsgProps.CONFIRM);
+					props.put(MsgProps.STATUS, MsgProps.CANCELED);
+					
+					// Посылаем ответ об успехе в таксопарк
+					MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props,  mqProperties.getProperty("taxiTaxiparkInQueue"), txtMsg.getJMSCorrelationID());
 				} else {
 					throw new BadMessageException("Incorrect message for the TAXI system, field action = " + action);
 				}

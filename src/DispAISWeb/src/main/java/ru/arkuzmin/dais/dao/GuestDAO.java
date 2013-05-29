@@ -2,6 +2,7 @@ package ru.arkuzmin.dais.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -28,6 +29,37 @@ public class GuestDAO {
 	private static final String ADD_GUEST = 
 		"insert into rsoi_disp.guest (guest_guid, guest_code) " +
 		"values (?,?)";
+	
+	
+	private static final String GET_GUID_BY_CODE = 
+		"select guest_guid from guest where guest_code = ?";
+	
+	
+	public String getGuidByCode(String code) {
+		String result = null;
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(GET_GUID_BY_CODE);
+			
+			stmt.setString(1, code);
+			
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+		
+		return result;
+	}
 	
 	
 	/**

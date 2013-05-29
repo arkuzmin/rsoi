@@ -4,6 +4,7 @@ public interface MsgProps {
 
 	final String REPLY = "reply";
 	final String ORDER = "order";
+	final String CANCEL = "cancel";
 	final String ADDRESS = "address";
 	final String DELIVERY_TIME = "delivery_time";
 	final String MIN_PRICE = "min_price";
@@ -15,6 +16,7 @@ public interface MsgProps {
 	final String COORDINATES = "coordinates";
 	final String DESCRIPTION = "description";
 	final String FULL_NAME = "full_name";
+	final String TAXIPARK_QUEUE = "taxipark_queue";
 	final String TAXI_QUEUE = "taxi_queue";
 	final String TAXI_GUID = "taxi_guid";
 	final String TAXIPARK_GUID = "taxipark_guid";
@@ -30,6 +32,7 @@ public interface MsgProps {
 	final String CONFIRMED = "confirmed";
 	final String COMPLETED = "completed";
 	final String NOT_ASSIGNED = "not_assigned";
+	final String ASSIGNED = "assigned";
 	final String CANCELED = "canceled";
 	
 	final String HAS_FREE = "has_free";

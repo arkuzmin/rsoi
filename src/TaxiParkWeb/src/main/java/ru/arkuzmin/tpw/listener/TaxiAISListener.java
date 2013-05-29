@@ -17,7 +17,6 @@ import ru.arkuzmin.common.MsgProps;
 import ru.arkuzmin.common.MsgSender;
 import ru.arkuzmin.common.PropertiesLoader;
 import ru.arkuzmin.tpw.common.CommonUtils;
-import ru.arkuzmin.tpw.dao.CarsDAO;
 import ru.arkuzmin.tpw.dao.RouterDAO;
 
 public class TaxiAISListener implements MessageListener {
@@ -65,14 +64,13 @@ public class TaxiAISListener implements MessageListener {
 					if (MsgProps.SUCCESS.equals(status)) {
 						
 						RouterDAO dao = new RouterDAO();
-						dao.changeStatusByTaxi(taxiCorrId, "assigned");
+						dao.changeStatusByTaxi(taxiCorrId, MsgProps.ASSIGNED);
 						
 						Map<String, String> route = dao.getRouteByTaxi(taxiCorrId);
 						String dispCorrId = (new LinkedList<String>(route.keySet())).get(0);
 						
-						String taxiGuid = txtMsg.getStringProperty(MsgProps.TAXI_GUID);
-						CarsDAO carDao = new CarsDAO();
-						String taxiQueue = carDao.getQueueID(taxiGuid);
+						String taxiQueue = txtMsg.getStringProperty(MsgProps.TAXI_QUEUE);
+						String taxiparkQueue = mqProps.getProperty("dispInQueue");
 						
 						// Сообщаем об успешном заказе в диспетчерскую систему
 						Map<String, String> props = new LinkedHashMap<String, String>();
@@ -80,8 +78,9 @@ public class TaxiAISListener implements MessageListener {
 						props.put(MsgProps.STATUS, MsgProps.SUCCESS);
 						props.put(MsgProps.DESCRIPTION, "taxi successfully ordered");
 						props.put(MsgProps.TAXI_QUEUE, taxiQueue);
+						props.put(MsgProps.TAXIPARK_QUEUE, taxiparkQueue);
 						
-						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("taxiReplyQueue"), dispCorrId);
+						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("dispInQueue"), dispCorrId);
 					
 						// Заказ успешно завершен
 					} else if (MsgProps.COMPLETED.equals(status)) {
@@ -89,6 +88,7 @@ public class TaxiAISListener implements MessageListener {
 						RouterDAO dao = new RouterDAO();
 						Map<String, String> route = dao.getRouteByTaxi(taxiCorrId);
 						String dispCorrId = (new LinkedList<String>(route.keySet())).get(0);
+						dao.changeStatusByTaxi(taxiCorrId, status);
 						
 						// Сообщаем об успешном завершении заказа в диспетчерскую систему
 						Map<String, String> props = new LinkedHashMap<String, String>();
@@ -96,7 +96,23 @@ public class TaxiAISListener implements MessageListener {
 						props.put(MsgProps.STATUS, MsgProps.COMPLETED);
 						props.put(MsgProps.DESCRIPTION, "order successfully completed");
 						
-						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("taxiReplyQueue"), dispCorrId);
+						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("dispInQueue"), dispCorrId);
+						// Заказ успешно отменен
+					} else if (MsgProps.CANCELED.equals(status)) {
+						RouterDAO dao = new RouterDAO();
+						Map<String, String> route = dao.getRouteByTaxi(taxiCorrId);
+						String dispCorrId = (new LinkedList<String>(route.keySet())).get(0);
+						dao.changeStatusByTaxi(taxiCorrId, status);
+						
+
+						// Сообщаем об успешной  отмене заказа в диспетчерскую систему
+						Map<String, String> props = new LinkedHashMap<String, String>();
+						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
+						props.put(MsgProps.STATUS, MsgProps.CANCELED);
+						props.put(MsgProps.DESCRIPTION, "order successfully canceled");
+						
+						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("dispInQueue"), dispCorrId);
+						
 					}
 				}
 				

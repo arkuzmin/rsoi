@@ -35,12 +35,16 @@ public class ApplicationDAO {
 	private static final String SELECT_CURRENT_USER_APP = "select application_guid from " +
 			"(select application_guid from application where requester_guid = ? order by application_dt desc) as t  limit 0,1";
 	
+	private static final String GET_TAXI_BY_APP = "select taxi_queue from application where application_guid = ? and requester_guid = ?";
+	
+	private static final String GET_TAXIPARK_BY_APP = "select taxipark_queue from application where application_guid = ? and requester_guid = ?";
+	
 	/**
 	 * Запрос на добавление новой заявки от пользователя.
 	 */
 	private static final String ADD_APPLICATION = 
-		"insert into rsoi_disp.application (application_guid, application_st, requester_guid, order_detail_guid, user_identifier, taxi_queue) " +
-		"values (?, ?, ?, ?, ?, ?)";
+		"insert into rsoi_disp.application (application_guid, application_st, requester_guid, order_detail_guid, user_identifier, taxipark_queue, taxi_queue) " +
+		"values (?, ?, ?, ?, ?, ?, ?)";
 	
 	/**
 	 * Запрос на получение истории пользователя.
@@ -54,8 +58,46 @@ public class ApplicationDAO {
 	 * Запрос на подтверждение или отмену заявки.
 	 */
 	private static final String CONFIRM_APPLICATION = 
-		"update rsoi_disp.application set application_st = ?, taxi_queue = ?  where application_guid = ?";
+		"update rsoi_disp.application set application_st = ?, taxipark_queue = ?, taxi_queue = ?  where application_guid = ?";
 
+	
+	private String getParamByApp(String sql, String applicationGuid, String requesterGuid) {
+		String result = null;
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(sql);
+			
+			int paramIndex = 1;
+			stmt.setString(paramIndex++, applicationGuid);
+			stmt.setString(paramIndex++, requesterGuid);
+			
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getString(1);
+			}
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+		
+		return result;
+	}
+	
+	public String getTaxiparkByApp(String applicationGuid, String requesterGuid) {
+		return getParamByApp(GET_TAXIPARK_BY_APP, applicationGuid, requesterGuid);
+	}
+	
+	public String getTaxiByApp(String applicationGuid, String requesterGuid) {
+		return getParamByApp(GET_TAXI_BY_APP, applicationGuid, requesterGuid);
+	}
+	
 	
 	public String getUserApplicationGuid(String guid) {
 		return getApplicationGuid(SELECT_CURRENT_USER_APP, guid);
@@ -98,7 +140,7 @@ public class ApplicationDAO {
 	 * @param confirm - подтверждение или отмена
 	 * @return
 	 */
-	public boolean confirmApplication(Order order, String taxi_queue, String status) {
+	public boolean confirmApplication(Order order, String taxipark_queue, String taxi_queue, String status) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		boolean result = false;
@@ -113,6 +155,7 @@ public class ApplicationDAO {
 			
 			int paramIndex = 1;
 			stmt.setString(paramIndex++, status);
+			stmt.setString(paramIndex++, taxipark_queue == null ? "unknown" : taxipark_queue);
 			stmt.setString(paramIndex++, taxi_queue == null ? "unknown" : taxi_queue);
 			stmt.setString(paramIndex++, order.getOrderGUID());
 			
@@ -229,6 +272,7 @@ public class ApplicationDAO {
 				stmt.setString(paramIndex++, order.getRequesterGUID());
 				stmt.setString(paramIndex++, order.getOrderDetailsGUID());
 				stmt.setString(paramIndex++, userIdentifier);
+				stmt.setString(paramIndex++, "UNKNOWN");
 				stmt.setString(paramIndex++, "UNKNOWN");
 				
 				aua = stmt.executeUpdate() == 1 ? true : false;

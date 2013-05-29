@@ -134,4 +134,18 @@ public interface DAISWebService {
         @WebParam(name = "arg0", targetNamespace = "")
         Order arg0);
 
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns boolean
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "cancelOrder", targetNamespace = "http://model.dais.arkuzmin.ru/", className = "ru.arkuzmin.dais.model.CancelOrder")
+    @ResponseWrapper(localName = "cancelOrderResponse", targetNamespace = "http://model.dais.arkuzmin.ru/", className = "ru.arkuzmin.dais.model.CancelOrderResponse")
+    public boolean cancelOrder(
+        @WebParam(name = "arg0", targetNamespace = "")
+        Order arg0);
+
 }

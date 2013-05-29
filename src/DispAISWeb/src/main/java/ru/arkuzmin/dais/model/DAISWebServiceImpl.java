@@ -100,7 +100,7 @@ public class DAISWebServiceImpl implements DAISWebService {
 	public boolean confirmApplication(Order order, boolean confirm) {
 		boolean result = false;
 		ApplicationDAO dao = new ApplicationDAO();
-		result = dao.confirmApplication(order, null, confirm ? "CONFIRMED" : "CANCELED");
+		result = dao.confirmApplication(order, null, null, confirm ? "CONFIRMED" : "CANCELED");
 		return result;
 	}
 
@@ -116,6 +116,8 @@ public class DAISWebServiceImpl implements DAISWebService {
 			
 			OrderDetailsDAO odDao = new OrderDetailsDAO();
 			Order order = odDao.getOrderByGuid(orderDetailGuid);
+			order.setOrderGUID(appGuid);
+			order.setRequesterGUID(guid);
 			
 			status = new Status();
 			status.setOrder(order);
@@ -128,6 +130,12 @@ public class DAISWebServiceImpl implements DAISWebService {
 			
 			OrderDetailsDAO odDao = new OrderDetailsDAO();
 			Order order = odDao.getOrderByGuid(orderDetailGuid);
+			
+			GuestDAO gDao = new GuestDAO();
+			String guestGuid = gDao.getGuidByCode(guid);
+			
+			order.setOrderGUID(appGuid);
+			order.setRequesterGUID(guestGuid);
 			
 			status = new Status();
 			status.setOrder(order);	
@@ -162,6 +170,29 @@ public class DAISWebServiceImpl implements DAISWebService {
 		}
 		
 		return guest.getCode();
+	}
+
+	@Override
+	public boolean cancelOrder(Order order) {
+		boolean result = false;
+		
+		ApplicationDAO appDAO = new ApplicationDAO();
+		String taxiparkQueue = appDAO.getTaxiparkByApp(order.getOrderGUID(), order.getRequesterGUID());
+		String taxiQueue = appDAO.getTaxiByApp(order.getOrderGUID(), order.getRequesterGUID());
+		
+		Map<String, String> params = new LinkedHashMap<String, String>();
+		params.put(MsgProps.ACTION, MsgProps.CANCEL);
+		params.put(MsgProps.TAXI_QUEUE, taxiQueue);
+		
+		try {
+			// Посылаем запрос на отмену заявки в таксопарк
+			MsgSender.sendMessage(taxiparkQueue, null, params, mqProps.getProperty("dispTaxiparkQueue"), order.getOrderGUID());
+			result = true;
+		} catch (JMSException e) {
+			logger.error("Error", e);
+		}
+		
+		return result;
 	}
 
 }
