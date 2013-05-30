@@ -28,6 +28,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="orderDt" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="orderGUID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="orderStatus" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="orderStatusDescription" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="requesterGUID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -49,6 +50,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "orderDt",
     "orderGUID",
     "orderStatus",
+    "orderStatusDescription",
     "requesterGUID"
 })
 public class Order {
@@ -65,6 +67,7 @@ public class Order {
     protected XMLGregorianCalendar orderDt;
     protected String orderGUID;
     protected String orderStatus;
+    protected String orderStatusDescription;
     protected String requesterGUID;
 
     /**
@@ -305,6 +308,30 @@ public class Order {
      */
     public void setOrderStatus(String value) {
         this.orderStatus = value;
+    }
+
+    /**
+     * Gets the value of the orderStatusDescription property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOrderStatusDescription() {
+        return orderStatusDescription;
+    }
+
+    /**
+     * Sets the value of the orderStatusDescription property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOrderStatusDescription(String value) {
+        this.orderStatusDescription = value;
     }
 
     /**

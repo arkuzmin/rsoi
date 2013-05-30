@@ -18,6 +18,7 @@ import ru.arkuzmin.common.MsgSender;
 import ru.arkuzmin.common.PropertiesLoader;
 import ru.arkuzmin.tpw.common.CommonUtils;
 import ru.arkuzmin.tpw.dao.RouterDAO;
+import ru.arkuzmin.tpw.dao.TaxiReplyDAO;
 
 public class TaxiAISListener implements MessageListener {
 
@@ -52,7 +53,32 @@ public class TaxiAISListener implements MessageListener {
 						props.put(MsgProps.TAXI_QUEUE, taxiQueue);
 						
 						MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props, mqProps.getProperty("dispInQueue"), dispCorrId);
+					
+					// Таксист сейчас занят
+					} else {
+						RouterDAO dao = new RouterDAO();
+						String taxiQueue = txtMsg.getStringProperty(MsgProps.TAXI_QUEUE);
+						String dispCorrId = dao.getDispCorrId(taxiCorrId);
+						
+						TaxiReplyDAO trDAO = new TaxiReplyDAO();
+						trDAO.addReply(dispCorrId, taxiQueue, MsgProps.BUSY);
+						
+						int replyCount = trDAO.getReplyCount(dispCorrId, taxiQueue, MsgProps.BUSY);
+						// TODO убрать эту заглушку
+						int carsCount = 1;
+						
+						// Ответили все таксисты: все заняты
+						if (carsCount == replyCount) {
+							Map<String, String> props = new LinkedHashMap<String, String>();
+							props.put(MsgProps.ACTION, MsgProps.CONFIRM);
+							props.put(MsgProps.STATUS, MsgProps.FAILED);
+							props.put(MsgProps.TAXIPARK_GUID, mqProps.getProperty("dispInQueue"));
+							props.put(MsgProps.HAS_APPROPRIATE, MsgProps.YES);
+							props.put(MsgProps.HAS_FREE, MsgProps.NO);
+							props.put(MsgProps.DESCRIPTION, "all cars are busy now");
 							
+							MsgSender.sendMessage(mqProps.getProperty("dispReplyQueue"), null, props,  mqProps.getProperty("dispInQueue"), dispCorrId);
+						}
 					}
 
 				// Пришло подтверждение от таксиста	

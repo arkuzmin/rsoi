@@ -18,6 +18,7 @@ public class Order implements Serializable{
 	private Double minPrice;
 	private String comfortClass;
 	private String orderStatus;
+	private String orderStatusDescription;
 	private String coordinates;
 	
 	public String getRequesterGUID() {
@@ -86,4 +87,11 @@ public class Order implements Serializable{
 	public void setComfortClass(String comfortClass) {
 		this.comfortClass = comfortClass;
 	}
+	public String getOrderStatusDescription() {
+		return orderStatusDescription;
+	}
+	public void setOrderStatusDescription(String orderStatusDescription) {
+		this.orderStatusDescription = orderStatusDescription;
+	}
+	
 }

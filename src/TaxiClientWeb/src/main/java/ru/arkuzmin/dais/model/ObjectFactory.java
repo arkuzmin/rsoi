@@ -49,27 +49,19 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RegisterNewUserResponse }
+     * 
+     */
+    public RegisterNewUserResponse createRegisterNewUserResponse() {
+        return new RegisterNewUserResponse();
+    }
+
+    /**
      * Create an instance of {@link User }
      * 
      */
     public User createUser() {
         return new User();
-    }
-
-    /**
-     * Create an instance of {@link GetStatusResponse }
-     * 
-     */
-    public GetStatusResponse createGetStatusResponse() {
-        return new GetStatusResponse();
-    }
-
-    /**
-     * Create an instance of {@link AddGuestApplicationResponse }
-     * 
-     */
-    public AddGuestApplicationResponse createAddGuestApplicationResponse() {
-        return new AddGuestApplicationResponse();
     }
 
     /**
@@ -81,91 +73,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AuthorizeUserResponse }
-     * 
-     */
-    public AuthorizeUserResponse createAuthorizeUserResponse() {
-        return new AuthorizeUserResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetUserHistoryResponse }
-     * 
-     */
-    public GetUserHistoryResponse createGetUserHistoryResponse() {
-        return new GetUserHistoryResponse();
-    }
-
-    /**
-     * Create an instance of {@link ConfirmApplication }
-     * 
-     */
-    public ConfirmApplication createConfirmApplication() {
-        return new ConfirmApplication();
-    }
-
-    /**
-     * Create an instance of {@link CancelOrderResponse }
-     * 
-     */
-    public CancelOrderResponse createCancelOrderResponse() {
-        return new CancelOrderResponse();
-    }
-
-    /**
-     * Create an instance of {@link CancelOrder }
-     * 
-     */
-    public CancelOrder createCancelOrder() {
-        return new CancelOrder();
-    }
-
-    /**
-     * Create an instance of {@link GetUserHistory }
-     * 
-     */
-    public GetUserHistory createGetUserHistory() {
-        return new GetUserHistory();
-    }
-
-    /**
-     * Create an instance of {@link RegisterNewUserResponse }
-     * 
-     */
-    public RegisterNewUserResponse createRegisterNewUserResponse() {
-        return new RegisterNewUserResponse();
-    }
-
-    /**
-     * Create an instance of {@link Status }
-     * 
-     */
-    public Status createStatus() {
-        return new Status();
-    }
-
-    /**
-     * Create an instance of {@link AddUserApplication }
-     * 
-     */
-    public AddUserApplication createAddUserApplication() {
-        return new AddUserApplication();
-    }
-
-    /**
      * Create an instance of {@link AuthorizeUser }
      * 
      */
     public AuthorizeUser createAuthorizeUser() {
         return new AuthorizeUser();
-    }
-
-    /**
-     * Create an instance of {@link ConfirmApplicationResponse }
-     * 
-     */
-    public ConfirmApplicationResponse createConfirmApplicationResponse() {
-        return new ConfirmApplicationResponse();
     }
 
     /**
@@ -177,11 +89,59 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Order }
+     * Create an instance of {@link GetUserHistory }
      * 
      */
-    public Order createOrder() {
-        return new Order();
+    public GetUserHistory createGetUserHistory() {
+        return new GetUserHistory();
+    }
+
+    /**
+     * Create an instance of {@link AddUserApplicationResponse }
+     * 
+     */
+    public AddUserApplicationResponse createAddUserApplicationResponse() {
+        return new AddUserApplicationResponse();
+    }
+
+    /**
+     * Create an instance of {@link AuthorizeUserResponse }
+     * 
+     */
+    public AuthorizeUserResponse createAuthorizeUserResponse() {
+        return new AuthorizeUserResponse();
+    }
+
+    /**
+     * Create an instance of {@link AddGuestApplicationResponse }
+     * 
+     */
+    public AddGuestApplicationResponse createAddGuestApplicationResponse() {
+        return new AddGuestApplicationResponse();
+    }
+
+    /**
+     * Create an instance of {@link AddUserApplication }
+     * 
+     */
+    public AddUserApplication createAddUserApplication() {
+        return new AddUserApplication();
+    }
+
+    /**
+     * Create an instance of {@link ConfirmApplication }
+     * 
+     */
+    public ConfirmApplication createConfirmApplication() {
+        return new ConfirmApplication();
+    }
+
+    /**
+     * Create an instance of {@link GetStatusResponse }
+     * 
+     */
+    public GetStatusResponse createGetStatusResponse() {
+        return new GetStatusResponse();
     }
 
     /**
@@ -193,11 +153,51 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AddUserApplicationResponse }
+     * Create an instance of {@link CancelOrderResponse }
      * 
      */
-    public AddUserApplicationResponse createAddUserApplicationResponse() {
-        return new AddUserApplicationResponse();
+    public CancelOrderResponse createCancelOrderResponse() {
+        return new CancelOrderResponse();
+    }
+
+    /**
+     * Create an instance of {@link Order }
+     * 
+     */
+    public Order createOrder() {
+        return new Order();
+    }
+
+    /**
+     * Create an instance of {@link ConfirmApplicationResponse }
+     * 
+     */
+    public ConfirmApplicationResponse createConfirmApplicationResponse() {
+        return new ConfirmApplicationResponse();
+    }
+
+    /**
+     * Create an instance of {@link Status }
+     * 
+     */
+    public Status createStatus() {
+        return new Status();
+    }
+
+    /**
+     * Create an instance of {@link GetUserHistoryResponse }
+     * 
+     */
+    public GetUserHistoryResponse createGetUserHistoryResponse() {
+        return new GetUserHistoryResponse();
+    }
+
+    /**
+     * Create an instance of {@link CancelOrder }
+     * 
+     */
+    public CancelOrder createCancelOrder() {
+        return new CancelOrder();
     }
 
     /**

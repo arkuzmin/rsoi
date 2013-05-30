@@ -23,7 +23,7 @@ public class OrderDetailsDAO {
 	
 	private static final Logger logger = CommonUtils.getLogger();
 	
-	private static final String GET_ORDER_BY_GUID = "select address, delivery_time, km_price, min_price, comfort_class, order_status, coordinates from order_details where order_detail_guid = ?";
+	private static final String GET_ORDER_BY_GUID = "select address, delivery_time, km_price, min_price, comfort_class, order_status, status_description, coordinates from order_details where order_detail_guid = ?";
 	
 	/**
 	 * Запрос на добавление информации по заказу.
@@ -33,7 +33,7 @@ public class OrderDetailsDAO {
 		"values (?, ?, ?, ?, ?, ?, ?, ?)";
 	
 	private static final String UPDATE_STATUS = 
-		"update order_details set order_status = ?, coordinates = ? where order_detail_guid = ?";
+		"update order_details set order_status = ?, status_description = ?, coordinates = ? where order_detail_guid = ?";
 	
 	private static final String CHECK_STATUS = 
 		"select order_status from order_details where order_detail_guid = ?";
@@ -62,6 +62,7 @@ public class OrderDetailsDAO {
 				result.setMinPrice(rs.getDouble(index++));
 				result.setComfortClass(rs.getString(index++));
 				result.setOrderStatus(rs.getString(index++));
+				result.setOrderStatusDescription(rs.getString(index++));
 				result.setCoordinates(rs.getString(index++));
 			}
 			
@@ -103,7 +104,7 @@ public class OrderDetailsDAO {
 		return result;
 	}
 	
-	public boolean updateStatus(String status, String coordinates, String orderDetailGuid) {
+	public boolean updateStatus(String status, String description, String coordinates, String orderDetailGuid) {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		boolean result = false;
@@ -114,6 +115,7 @@ public class OrderDetailsDAO {
 			
 			int paramIndex = 1;
 			stmt.setString(paramIndex++, status);
+			stmt.setString(paramIndex++, description);
 			stmt.setString(paramIndex++, coordinates);
 			stmt.setString(paramIndex++, orderDetailGuid);
 			

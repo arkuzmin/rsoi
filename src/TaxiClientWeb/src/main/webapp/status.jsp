@@ -18,6 +18,7 @@
 			<h2><img src="img/status2.png" width ="64px" height="64px" class="img-rounded"> Статус текущего заказа </h2>
 			<c:if test="${currentStatus != null}">   
 				<p><b>Статус: </b>${currentStatus.order.orderStatus}</p>
+				<p><b>Описание:</b> ${currentStatus.order.orderStatusDescription}</p>
 				<hr>
 				<h3>Детали заказа</h3>
 				<hr>

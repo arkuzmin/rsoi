@@ -26,11 +26,38 @@ public class CarsDAO {
 
 	private static final String WHERE_FILTER = "WHERE_FILTER";
 
+	private static final String GET_CARS_COUNT = "select count(*) from cars";
+	
 	private static final String SELECT_CARS = "select car_guid, car_mark, min_price, km_price, comfort_class, queue_id from cars where "
 			+ WHERE_FILTER;
 
 	private static final String GET_QUEUE_BY_GUID = "select queue_id from cars where car_guid = ?";
 
+	public int getCarsCount() {
+		int result = 0;
+		
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = ConnectionFactory.getInstance().getConnection();
+			stmt = conn.prepareStatement(GET_CARS_COUNT);
+			
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				result = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			logger.error("Error", e);
+		} finally {
+			SQLUtils.closeSQLObjects(conn, stmt, rs);
+		}
+		
+		return result;
+	}
+	
 	public List<Car> selectCars(String minPrice, String kmPrice,
 			String comfortClass) {
 

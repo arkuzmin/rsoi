@@ -84,5 +84,17 @@ create table rsoi_taxipark2.router (
   order_status varchar(100) not null
 );
 
+create table rsoi_taxipark1.taxi_reply (
+  order_guid varchar(200) not null,
+  taxi_guid varchar(200) not null,
+  reply varchar(100) not null
+);
+
+create table rsoi_taxipark2.taxi_reply (
+  order_guid varchar(200) not null,
+  taxi_guid varchar(200) not null,
+  reply varchar(100) not null
+);
+
 --drop schema rsoi_taxipark1;
 --drop schema rsoi_taxipark2;

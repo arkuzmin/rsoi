@@ -8,11 +8,9 @@
 <div class="navbar">
   <div class="navbar-inner">
     <a class="brand" href="home.jsp"><img src="img/icon.png" class="img-rounded"></a>
-    <c:if test="${user != null}">   
    <ul class="nav">
       <li class="active"><a href="index.jsp">Домой</a></li>
     </ul>
-    </c:if>
   </div>
 </div>
 	<div class="container">
@@ -20,6 +18,7 @@
 			<h2><img src="img/status2.png" width ="64px" height="64px" class="img-rounded"> Статус текущего заказа </h2>
 			<c:if test="${currentStatus != null}">   
 				<p><b>Статус: </b>${currentStatus.order.orderStatus}</p>
+				<p><b>Описание:</b> ${currentStatus.order.orderStatusDescription}</p>
 				<hr>
 				<h3>Детали заказа</h3>
 				<hr>

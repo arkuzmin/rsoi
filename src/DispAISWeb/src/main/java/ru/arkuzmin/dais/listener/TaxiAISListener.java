@@ -41,7 +41,7 @@ public class TaxiAISListener implements MessageListener {
 					String orderDetailGuid = appDao.getOrderDetailGuid(applicationGuid);
 						
 					OrderDetailsDAO odDao = new OrderDetailsDAO();
-					odDao.updateStatus(status, coordinates, orderDetailGuid);
+					odDao.updateStatus(status, null, coordinates, orderDetailGuid);
 				} else {
 					throw new BadMessageException("Incorrect message for the TAXI system, field action = " + action);
 				}

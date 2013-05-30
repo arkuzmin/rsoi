@@ -1,6 +1,7 @@
 package ru.arkuzmin.dais.listener;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -22,6 +23,7 @@ import ru.arkuzmin.dais.dao.OrderDetailsDAO;
 import ru.arkuzmin.dais.dao.TaxiparkDAO;
 import ru.arkuzmin.dais.dao.TaxiparkReplyDAO;
 import ru.arkuzmin.dais.dto.Order;
+import ru.arkuzmin.dais.timer.ResendOrder;
 import ru.arkuzmin.dais.timer.StatusCache;
 
 public class TaxiparkAISListener implements MessageListener {
@@ -72,29 +74,78 @@ public class TaxiparkAISListener implements MessageListener {
 							TaxiparkDAO tpDAO = new TaxiparkDAO();
 							TaxiparkReplyDAO tprDAO = new TaxiparkReplyDAO();
 							
-							tprDAO.addNewReply(application_guid, taxipark_guid, MsgProps.BUSY);
+							boolean hasReplied = tprDAO.getReplyResendCount(application_guid, taxipark_guid) != -1 ? true : false;
 							
-							int taxiparkCount = tpDAO.getTaxiparkCount();
-							int replyCountB = tprDAO.getReplyCount(application_guid, MsgProps.BUSY);
-							int replyCountN = tprDAO.getReplyCount(application_guid, MsgProps.NO_APPROPRIATE);
-							int replyCount = replyCountB + replyCountN;
+							if (!hasReplied) {
 							
-							// Если ответили уже все таксисты
-							if (taxiparkCount == replyCount) {
+								tprDAO.addNewReply(application_guid, taxipark_guid, MsgProps.BUSY);
 								
+								int taxiparkCount = tpDAO.getTaxiparkCount();
+								int replyCountB = tprDAO.getReplyCount(application_guid, MsgProps.BUSY);
+								int replyCountN = tprDAO.getReplyCount(application_guid, MsgProps.NO_APPROPRIATE);
+								int replyCount = replyCountB + replyCountN;
+								
+								// Если ответили уже все таксисты
+								if (taxiparkCount == replyCount && replyCountB != 0) {
+									Order order = new Order();
+									order.setOrderGUID(application_guid);
+									
+									ApplicationDAO dao = new ApplicationDAO();
+									dao.confirmApplication(order, null, null, MsgProps.BUSY);
+									
+									OrderDetailsDAO odDAO = new OrderDetailsDAO();
+									String orderDetailGuid = dao.getOrderDetailGuid(application_guid);
+									odDAO.updateStatus(MsgProps.BUSY, "All cars are busy now, please wait", null, orderDetailGuid);
+									
+									// Получаем список занятых, удовлетворяющих условиям поиска таксистов
+									List<String> busyTP = tprDAO.selectBusyTaxiparks(application_guid, MsgProps.BUSY);
+									
+									// Запускаем задачу по формированию заказов этим таксопаркам, до тех пор, пока заказ не будет принят в обработку
+									ResendOrder.resendOrder(busyTP, application_guid, 30);
+								}
 							}
 							
 						// Нет подходящих таксистов
 						} else if (MsgProps.NO.equals(hasAppropriate)) {
+							TaxiparkDAO tpDAO = new TaxiparkDAO();
+							TaxiparkReplyDAO tprDAO = new TaxiparkReplyDAO();
+							tprDAO.addNewReply(application_guid, taxipark_guid, MsgProps.NO_APPROPRIATE);
 							
+							int taxiparkCount = tpDAO.getTaxiparkCount();
+							int replyCountN = tprDAO.getReplyCount(application_guid, MsgProps.NO_APPROPRIATE);
+							int replyCountB = tprDAO.getReplyCount(application_guid, MsgProps.BUSY);
+							int replyCount = replyCountN + replyCountB;
 							
+							// Если ни в одном таксопарке нет удовлетворяющих клиента такси
+							if (taxiparkCount == replyCountN) {
+								Order order = new Order();
+								order.setOrderGUID(application_guid);
+								
+								ApplicationDAO dao = new ApplicationDAO();
+								dao.confirmApplication(order, null, null, MsgProps.CANCELED);
+								
+								OrderDetailsDAO odDAO = new OrderDetailsDAO();
+								String orderDetailGuid = dao.getOrderDetailGuid(application_guid);
+								odDAO.updateStatus(MsgProps.CANCELED, "There are no appropriate cars, please, try another filter", null, orderDetailGuid);
+							
+							} else if (taxiparkCount == replyCount && replyCountB != 0) {
+									Order order = new Order();
+									order.setOrderGUID(application_guid);
+									
+									ApplicationDAO dao = new ApplicationDAO();
+									dao.confirmApplication(order, null, null, MsgProps.BUSY);
+									
+									OrderDetailsDAO odDAO = new OrderDetailsDAO();
+									String orderDetailGuid = dao.getOrderDetailGuid(application_guid);
+									odDAO.updateStatus(MsgProps.BUSY, "All cars are busy now, please wait", null, orderDetailGuid);
+									
+									// Получаем список занятых, удовлетворяющих условиям поиска таксистов
+									List<String> busyTP = tprDAO.selectBusyTaxiparks(application_guid, MsgProps.BUSY);
+									
+									// Запускаем задачу по формированию заказов этим таксопаркам, до тех пор, пока заказ не будет принят в обработку
+									ResendOrder.resendOrder(busyTP, application_guid, 30);
+								}
 						}
-						
-						Order order = new Order();
-						order.setOrderGUID(application_guid);
-						
-						ApplicationDAO dao = new ApplicationDAO();
-						dao.confirmApplication(order, null, null, "CANCELED");
 						
 					// Заказ успешно принят в обработку таксистом
 					} else if (MsgProps.SUCCESS.equals(status)) {
@@ -135,7 +186,7 @@ public class TaxiparkAISListener implements MessageListener {
 						dao.confirmApplication(order, null, null, MsgProps.CANCELED);
 						String odGuid = dao.getOrderDetailGuid(applicationGuid);
 						OrderDetailsDAO odDAO = new OrderDetailsDAO();
-						odDAO.updateStatus(MsgProps.CANCELED, "unknown", odGuid);
+						odDAO.updateStatus(MsgProps.CANCELED, "Your order was successfully canceled", "unknown", odGuid);
 					}
 					
 				} else {

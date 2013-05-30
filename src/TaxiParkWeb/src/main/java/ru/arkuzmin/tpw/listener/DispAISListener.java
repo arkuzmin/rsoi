@@ -22,6 +22,7 @@ import ru.arkuzmin.common.PropertiesLoader;
 import ru.arkuzmin.tpw.common.CommonUtils;
 import ru.arkuzmin.tpw.dao.CarsDAO;
 import ru.arkuzmin.tpw.dao.RouterDAO;
+import ru.arkuzmin.tpw.dao.TaxiReplyDAO;
 import ru.arkuzmin.tpw.dto.Car;
 import ru.arkuzmin.tpw.dto.Order;
 
@@ -91,17 +92,25 @@ public class DispAISListener implements MessageListener {
 					RouterDAO routerDAO = new RouterDAO();
 					routerDAO.addRoute(txtMsg.getJMSCorrelationID(), taxiCorrID, order);
 					
+					TaxiReplyDAO trDAO = new TaxiReplyDAO();
+					trDAO.clearReply(txtMsg.getJMSCorrelationID());
+					
 					
 					CarsDAO carsDao = new CarsDAO();
 					List<Car> cars = carsDao.selectCars(minPrice, kmPrice, comfortClass);
 					
 					// Нет автомобилей, удовлетворяющих условиям поиска
 					if (cars == null || cars.isEmpty()) {
+						
+						routerDAO.changeStatusByTaxi(taxiCorrID, MsgProps.CANCELED);
+						
 						Map<String, String> props = new LinkedHashMap<String, String>();
 						props.put(MsgProps.ACTION, MsgProps.CONFIRM);
 						props.put(MsgProps.STATUS, MsgProps.FAILED);
+						props.put(MsgProps.TAXIPARK_GUID, mqProps.getProperty("dispInQueue"));
+						props.put(MsgProps.HAS_APPROPRIATE, MsgProps.NO);
 						props.put(MsgProps.DESCRIPTION, "no taxi cars available with this search conditions");
-						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, null, txtMsg.getJMSCorrelationID());
+						MsgSender.sendMessage(txtMsg.getJMSReplyTo(), null, props, mqProps.getProperty("dispInQueue"), txtMsg.getJMSCorrelationID());
 					
 					// Опрашиваем все найденные автомобили
 					} else {
