@@ -8,11 +8,9 @@
 <div class="navbar">
   <div class="navbar-inner">
     <a class="brand" href="home.jsp"><img src="img/icon.png" class="img-rounded"></a>
-    <c:if test="${user != null}">   
    <ul class="nav">
       <li class="active"><a href="index.jsp">Домой</a></li>
     </ul>
-    </c:if>
   </div>
 </div>
 	<div class="container">
