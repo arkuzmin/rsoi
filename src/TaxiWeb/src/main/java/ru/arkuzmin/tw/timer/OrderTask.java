@@ -51,7 +51,7 @@ public class OrderTask extends TimerTask {
 			}
 		} else {
 			String status = dao.checkStatus();
-			if (!MsgProps.CANCELED.equals(status)) {
+			if (!MsgProps.FREE.equals(status)) {
 				dao.changeStatus("Completed " + (N-n) * 10 + "%. " + n*sec + " seconds left...");
 				OrderMaker.completeOrder(sec, n-1, dest, correlationID);
 			}
